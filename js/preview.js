@@ -170,8 +170,6 @@ const Preview = {
           <div class="dp-options">
             ${dpDatesFormatted.map(d => `<button class="dp-option" data-date="${d.value}">${d.label}</button>`).join('')}
           </div>
-          <button class="btn btn-confirm-date" id="btnConfirmDate" style="display:none;background:${s.colorPrimary};color:#fff;padding:10px 28px;border:none;border-radius:${s.btnRadius}px;font-size:15px;cursor:pointer;margin-top:12px;">${this._esc(s.dpConfirmText)}</button>
-          <div class="dp-thankyou" id="dpThankYou" style="display:none;color:${s.colorPrimary};font-weight:600;margin-top:12px;">${this._esc(s.dpThankYou)}</div>
         </div>
       `;
     }
@@ -449,11 +447,11 @@ ${musicHTML}
   <h1 class="title">${this._esc(s.mainTitle)}</h1>
   <p class="main-text">${this._esc(s.mainText)}</p>
   ${photosHTML}
-  ${!dpActive ? `<div class="details">
-    <p>📅 ${this._esc(s.mainDate)}</p>
+  <div class="details">
+    ${!dpActive ? `<p>📅 ${this._esc(s.mainDate)}</p>` : ''}
     <p>📍 ${this._esc(s.mainPlace)}</p>
     <p>Для: <strong>${this._esc(s.girlName)}</strong></p>
-  </div>` : ''}
+  </div>
   ${timerHTML}
   <div class="btns">
     <button class="btn btn-yes" id="btnYes">${this._esc(s.btnYesText)}</button>
@@ -532,32 +530,14 @@ ${yesHeartsCanvas}
 
   /* ---- Выбор даты ---- */
   const dpOptions = document.querySelectorAll('.dp-option');
-  const btnConfirm = document.getElementById('btnConfirmDate');
-  const dpThankYou = document.getElementById('dpThankYou');
 
   dpOptions.forEach(opt => {
     opt.addEventListener('click', function() {
       dpOptions.forEach(o => o.classList.remove('selected'));
       opt.classList.add('selected');
       selectedDate = opt.dataset.date;
-      if (btnConfirm) btnConfirm.style.display = 'inline-block';
     });
   });
-
-  if (btnConfirm) {
-    btnConfirm.addEventListener('click', async function() {
-      if (!selectedDate) return;
-      btnConfirm.disabled = true;
-      btnConfirm.textContent = 'Отправка...';
-
-      await sendResponse({ selectedDate: selectedDate });
-
-      btnConfirm.style.display = 'none';
-      document.querySelector('.dp-options').style.display = 'none';
-      document.querySelector('.dp-title').style.display = 'none';
-      if (dpThankYou) dpThankYou.style.display = 'block';
-    });
-  }
 
   /* ---- Кнопка «Нет» ---- */
   const btnNo = document.getElementById('btnNo');
