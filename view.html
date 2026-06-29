@@ -84,8 +84,8 @@
         /* Вставляем HTML приглашения в iframe */
         loader.style.display = 'none';
         const iframe = document.createElement('iframe');
-        iframe.sandbox = 'allow-scripts';
-        iframe.srcdoc = data.html;
+        const blob = new Blob([data.html], { type: 'text/html' });
+        iframe.src = URL.createObjectURL(blob);
         document.body.appendChild(iframe);
 
         /* Обновляем заголовок страницы */

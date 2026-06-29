@@ -6,9 +6,12 @@
 const Preview = {
   _iframe: null,
   _timeout: null,
+  _blobUrl: null,
 
   init() {
     this._iframe = document.querySelector('#previewIframe');
+    /* Убираем sandbox — Blob URL и так изолирован */
+    if (this._iframe) this._iframe.removeAttribute('sandbox');
     /* Подписываемся на изменения состояния */
     subscribe(() => this._debouncedUpdate());
     /* Первичный рендер */
@@ -25,7 +28,11 @@ const Preview = {
   update() {
     if (!this._iframe) return;
     const html = this.generateHTML();
-    this._iframe.srcdoc = html;
+    /* Используем Blob URL — нет проблем с cross-origin и sandbox */
+    if (this._blobUrl) URL.revokeObjectURL(this._blobUrl);
+    const blob = new Blob([html], { type: 'text/html' });
+    this._blobUrl = URL.createObjectURL(blob);
+    this._iframe.src = this._blobUrl;
   },
 
   /* ---- Генерация полного HTML для предпросмотра ---- */

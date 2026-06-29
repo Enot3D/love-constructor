@@ -233,7 +233,9 @@ const App = {
       btn.addEventListener('click', () => {
         const html = Preview.generateHTML(true);
         overlay.style.display = 'block';
-        fsIframe.srcdoc = html;
+        fsIframe.removeAttribute('sandbox');
+        const blob = new Blob([html], { type: 'text/html' });
+        fsIframe.src = URL.createObjectURL(blob);
       });
     }
 
