@@ -151,6 +151,30 @@ const Preview = {
       ).join('');
     }
 
+    /* --- Выбор даты --- */
+    let datePickerHTML = '';
+    if (s.dpEnabled === 'on' && s.dpDates.length > 0) {
+      const dpDatesFormatted = s.dpDates.map(d => {
+        const dt = new Date(d + 'T00:00:00');
+        const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+        const monthNames = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+        return {
+          value: d,
+          label: `${dt.getDate()} ${monthNames[dt.getMonth()]}, ${dayNames[dt.getDay()]}`
+        };
+      });
+      datePickerHTML = `
+        <div class="date-picker-block" id="datePickerBlock">
+          <div class="dp-title">${this._esc(s.dpTitle)}</div>
+          <div class="dp-options">
+            ${dpDatesFormatted.map(d => `<button class="dp-option" data-date="${d.value}">${d.label}</button>`).join('')}
+          </div>
+          <button class="btn btn-confirm-date" id="btnConfirmDate" style="display:none;background:${s.colorPrimary};color:#fff;padding:10px 28px;border:none;border-radius:${s.btnRadius}px;font-size:15px;cursor:pointer;margin-top:12px;">${this._esc(s.dpConfirmText)}</button>
+          <div class="dp-thankyou" id="dpThankYou" style="display:none;color:${s.colorPrimary};font-weight:600;margin-top:12px;">${this._esc(s.dpThankYou)}</div>
+        </div>
+      `;
+    }
+
     /* --- Печатающийся текст --- */
     const typingAttr = s.fxTyping === 'on' ? ' data-typing="true"' : '';
 
@@ -260,6 +284,49 @@ const Preview = {
     color: #fff;
   }
   .btn:hover { ${btnHoverCSS} }
+
+  .date-picker-block {
+    margin: 24px 0;
+    padding: 20px;
+    background: rgba(255,255,255,0.6);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    border: 1px solid ${s.colorBorder};
+    text-align: center;
+  }
+  .dp-title {
+    font-size: 1.1em;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: ${s.colorPrimary};
+  }
+  .dp-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+  .dp-option {
+    padding: 10px 18px;
+    border: 2px solid ${s.colorBorder};
+    border-radius: 12px;
+    background: rgba(255,255,255,0.7);
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: ${s.colorText};
+  }
+  .dp-option:hover {
+    border-color: ${s.colorPrimary};
+    background: rgba(233,30,99,0.05);
+  }
+  .dp-option.selected {
+    border-color: ${s.colorPrimary};
+    background: ${s.colorPrimary};
+    color: #fff;
+    transform: scale(1.05);
+  }
 
   .photos-grid {
     display: grid;
@@ -391,6 +458,7 @@ ${musicHTML}
     <button class="btn btn-yes" id="btnYes">${this._esc(s.btnYesText)}</button>
     <button class="btn btn-no" id="btnNo">${this._esc(s.btnNoText)}</button>
   </div>
+  ${datePickerHTML}
   <p class="signature">${this._esc(s.mainSignature)}, ${this._esc(s.senderName)} ❤</p>
 </div>
 
@@ -433,7 +501,56 @@ ${yesHeartsCanvas}
     galleryAuto: s.galleryAuto,
     galleryInterval: s.galleryInterval,
     colorPrimary: s.colorPrimary,
+    colorBorder: s.colorBorder,
+    colorText: s.colorText,
+    dpEnabled: s.dpEnabled,
+    dpDates: s.dpDates,
+    dpThankYou: s.dpThankYou,
+    publishedId: s.publishedId,
+    firebaseUrl: 'https://love-constructor-default-rtdb.firebaseio.com',
   })};
+
+  /* ---- Выбор даты ---- */
+  let selectedDate = null;
+  const dpOptions = document.querySelectorAll('.dp-option');
+  const btnConfirm = document.getElementById('btnConfirmDate');
+  const dpThankYou = document.getElementById('dpThankYou');
+
+  dpOptions.forEach(opt => {
+    opt.addEventListener('click', function() {
+      dpOptions.forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      selectedDate = opt.dataset.date;
+      if (btnConfirm) btnConfirm.style.display = 'inline-block';
+    });
+  });
+
+  if (btnConfirm) {
+    btnConfirm.addEventListener('click', async function() {
+      if (!selectedDate || !s.publishedId) return;
+      btnConfirm.disabled = true;
+      btnConfirm.textContent = 'Отправка...';
+
+      try {
+        const respId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+        await fetch(s.firebaseUrl + '/responses/' + s.publishedId + '/' + respId + '.json', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            selectedDate: selectedDate,
+            timestamp: new Date().toISOString()
+          })
+        });
+        btnConfirm.style.display = 'none';
+        document.querySelector('.dp-options').style.display = 'none';
+        document.querySelector('.dp-title').style.display = 'none';
+        if (dpThankYou) dpThankYou.style.display = 'block';
+      } catch (e) {
+        btnConfirm.textContent = 'Ошибка. Попробуй ещё';
+        btnConfirm.disabled = false;
+      }
+    });
+  }
 
   /* ---- Кнопка «Нет» ---- */
   const btnNo = document.getElementById('btnNo');
@@ -538,6 +655,22 @@ ${yesHeartsCanvas}
     btnYes.addEventListener('click', function() {
       const yesScreen = document.getElementById('yesScreen');
       if (yesScreen) yesScreen.classList.add('show');
+
+      /* Сохраняем ответ «Да» в Firebase */
+      if (s.publishedId) {
+        try {
+          const respId = 'yes_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+          fetch(s.firebaseUrl + '/responses/' + s.publishedId + '/' + respId + '.json', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              clickedYes: true,
+              selectedDate: selectedDate || null,
+              timestamp: new Date().toISOString()
+            })
+          });
+        } catch (e) { /* тихо игнорируем */ }
+      }
 
       if (s.yesMusic) {
         const audio = document.getElementById('bgMusic');

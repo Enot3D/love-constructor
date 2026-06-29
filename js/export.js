@@ -88,6 +88,10 @@ const ExportModule = {
 
       if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
 
+      /* Сохраняем ID приглашения */
+      setState('publishedId', id);
+      ResponsesModule.setInviteId(id);
+
       /* Формируем ссылку */
       const baseUrl = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
       const link = baseUrl + 'view.html?id=' + id;

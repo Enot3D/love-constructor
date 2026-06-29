@@ -26,6 +26,8 @@ const App = {
     NoBehaviorModule.init();
     SvgModule.init();
     DecorationsModule.init();
+    DatePickerModule.init();
+    ResponsesModule.init();
 
     /* --- Навигация по секциям --- */
     this._initNav();

@@ -130,6 +130,14 @@ const AppState = {
 
   /* ---------- Украшения ---------- */
   decorations: [],    // { id, type, emoji, size, rotation, color, x, y }
+
+  /* ---------- Выбор даты ---------- */
+  dpEnabled: 'off',
+  dpTitle: 'Выбери удобный день:',
+  dpConfirmText: 'Подтвердить выбор',
+  dpDates: [],        // ['2025-03-15', '2025-03-20', ...]
+  dpThankYou: 'Спасибо! Я свяжусь с тобой скоро!',
+  publishedId: null,   // ID опубликованного приглашения
 };
 
 /* ---- Счётчик уникальных ID ---- */
@@ -209,6 +217,8 @@ function resetProject() {
     bgImageData: null,
     svgItems: [],
     decorations: [],
+    dpDates: [],
+    publishedId: null,
     messages: [
       { id: 1, text: 'Ты уверена?' },
       { id: 2, text: 'Подумай ещё раз...' },

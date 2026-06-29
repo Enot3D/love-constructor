@@ -74,6 +74,10 @@ git push -u origin master
     "invitations": {
       ".read": true,
       ".write": true
+    },
+    "responses": {
+      ".read": true,
+      ".write": true
     }
   }
 }
