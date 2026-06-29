@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Конструктор приглашений на свидание</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+
+  <!-- ===== ВЕРХНЯЯ ПАНЕЛЬ ===== -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">&#10084;</span>
+      <span class="topbar-title">Love Constructor</span>
+    </div>
+    <div class="topbar-center">
+      <button class="topbar-btn" id="btnNewProject" title="Новый проект">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        <span>Новый</span>
+      </button>
+      <button class="topbar-btn" id="btnSave" title="Сохранить проект">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17,21 17,13 7,13 7,21"/><polyline points="7,3 7,8 15,8"/></svg>
+        <span>Сохранить</span>
+      </button>
+      <button class="topbar-btn" id="btnLoad" title="Загрузить проект">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        <span>Загрузить</span>
+      </button>
+      <button class="topbar-btn" id="btnExport" title="Экспорт сайта">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16"/><path d="M14 14l1.586-1.586a2 2 0 012.828 0L20 14"/><circle cx="4" cy="4" r="2"/><rect x="2" y="2" width="20" height="20" rx="5"/></svg>
+        <span>Экспорт</span>
+      </button>
+      <button class="topbar-btn" id="btnImport" title="Импорт проекта">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17,8 12,3 7,8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <span>Импорт</span>
+      </button>
+      <button class="topbar-btn publish-btn" id="btnPublish" title="Опубликовать и получить ссылку">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+        <span>Опубликовать</span>
+      </button>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn preview-btn" id="btnPreviewFull" title="Полный предпросмотр">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+        <span>Предпросмотр</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== ОСНОВНОЙ КОНТЕЙНЕР ===== -->
+  <main class="workspace">
+
+    <!-- Левая панель — настройки -->
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <button class="nav-item active" data-section="main">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+          <span>Основное</span>
+        </button>
+        <button class="nav-item" data-section="buttons">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="8" width="18" height="8" rx="4"/></svg>
+          <span>Кнопки</span>
+        </button>
+        <button class="nav-item" data-section="noBehavior">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+          <span>Кнопка «Нет»</span>
+        </button>
+        <button class="nav-item" data-section="photos">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+          <span>Фото</span>
+        </button>
+        <button class="nav-item" data-section="gallery">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="12" y1="2" x2="12" y2="22"/></svg>
+          <span>Галерея</span>
+        </button>
+        <button class="nav-item" data-section="music">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <span>Музыка</span>
+        </button>
+        <button class="nav-item" data-section="background">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <span>Фон</span>
+        </button>
+        <button class="nav-item" data-section="themes">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 100 20 10 10 0 000-20z"/><path d="M12 2v20"/><path d="M2 12h20"/></svg>
+          <span>Темы</span>
+        </button>
+        <button class="nav-item" data-section="fonts">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4,7 4,4 20,4 20,7"/><line x1="9" y1="20" x2="15" y2="20"/><line x1="12" y1="4" x2="12" y2="20"/></svg>
+          <span>Шрифты</span>
+        </button>
+        <button class="nav-item" data-section="animations">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/></svg>
+          <span>Анимации</span>
+        </button>
+        <button class="nav-item" data-section="effects">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <span>Эффекты</span>
+        </button>
+        <button class="nav-item" data-section="messages">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+          <span>Сообщения</span>
+        </button>
+        <button class="nav-item" data-section="yesAction">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <span>Кнопка «Да»</span>
+        </button>
+        <button class="nav-item" data-section="timer">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          <span>Таймер</span>
+        </button>
+        <button class="nav-item" data-section="colors">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 000 20 5 5 0 005-5c0-1.1-.4-2-1-2.7-.5-.7-1-1.5-1-2.3a3 3 0 013-3h1.7A10 10 0 0012 2z"/></svg>
+          <span>Цвета</span>
+        </button>
+        <button class="nav-item" data-section="svg">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          <span>SVG</span>
+        </button>
+        <button class="nav-item" data-section="decorations">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <span>Украшения</span>
+        </button>
+      </nav>
+
+      <!-- Панели настроек (контент каждой секции) -->
+      <div class="sidebar-content" id="sidebarContent">
+
+        <!-- 1. ОСНОВНОЕ -->
+        <div class="settings-panel active" data-panel="main">
+          <h3 class="panel-title">Основные настройки</h3>
+          <div class="form-group">
+            <label>Название страницы</label>
+            <input type="text" id="pageTitle" placeholder="Приглашение на свидание">
+          </div>
+          <div class="form-group">
+            <label>Заголовок</label>
+            <input type="text" id="mainTitle" placeholder="Ты согласна пойти со мной на свидание?">
+          </div>
+          <div class="form-group">
+            <label>Основной текст</label>
+            <textarea id="mainText" rows="3" placeholder="Я хочу провести с тобой незабываемый вечер..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Текст после «Да»</label>
+            <textarea id="yesText" rows="2" placeholder="Ура! Я так рад! Встречаемся..."></textarea>
+          </div>
+          <div class="form-group">
+            <label>Подпись</label>
+            <input type="text" id="mainSignature" placeholder="С любовью...">
+          </div>
+          <div class="form-group">
+            <label>Дата</label>
+            <input type="text" id="mainDate" placeholder="14 февраля, 19:00">
+          </div>
+          <div class="form-group">
+            <label>Место встречи</label>
+            <input type="text" id="mainPlace" placeholder="Кафе «У моря»">
+          </div>
+          <div class="form-group">
+            <label>Имя девушки</label>
+            <input type="text" id="girlName" placeholder="Анна">
+          </div>
+          <div class="form-group">
+            <label>Имя отправителя</label>
+            <input type="text" id="senderName" placeholder="Максим">
+          </div>
+        </div>
+
+        <!-- 2. КНОПКИ -->
+        <div class="settings-panel" data-panel="buttons">
+          <h3 class="panel-title">Настройки кнопок</h3>
+          <div class="form-group">
+            <label>Текст кнопки «Да»</label>
+            <input type="text" id="btnYesText" placeholder="Да!">
+          </div>
+          <div class="form-group">
+            <label>Текст кнопки «Нет»</label>
+            <input type="text" id="btnNoText" placeholder="Нет">
+          </div>
+          <div class="form-group">
+            <label>Размер кнопок: <span id="btnSizeVal">16</span>px</label>
+            <input type="range" id="btnSize" min="10" max="36" value="16">
+          </div>
+          <div class="form-group">
+            <label>Цвет кнопки «Да»</label>
+            <input type="color" id="btnYesColor" value="#e91e63">
+          </div>
+          <div class="form-group">
+            <label>Цвет кнопки «Нет»</label>
+            <input type="color" id="btnNoColor" value="#9e9e9e">
+          </div>
+          <div class="form-group">
+            <label>Скругление: <span id="btnRadiusVal">50</span>px</label>
+            <input type="range" id="btnRadius" min="0" max="50" value="50">
+          </div>
+          <div class="form-group">
+            <label>Шрифт кнопок</label>
+            <select id="btnFont">
+              <option value="inherit">Как на странице</option>
+              <option value="Inter, sans-serif">Inter</option>
+              <option value="'Playfair Display', serif">Playfair Display</option>
+              <option value="'Cormorant Garamond', serif">Cormorant Garamond</option>
+              <option value="'Pacifico', cursive">Pacifico</option>
+              <option value="'Montserrat', sans-serif">Montserrat</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Тень кнопок</label>
+            <select id="btnShadow">
+              <option value="none">Без тени</option>
+              <option value="sm">Маленькая</option>
+              <option value="md" selected>Средняя</option>
+              <option value="lg">Большая</option>
+              <option value="glow">Свечение</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Эффект наведения</label>
+            <select id="btnHover">
+              <option value="scale">Увеличение</option>
+              <option value="glow">Свечение</option>
+              <option value="darken">Затемнение</option>
+              <option value="lift">Подъём</option>
+              <option value="none">Нет</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Анимация появления</label>
+            <select id="btnAnimIn">
+              <option value="none">Нет</option>
+              <option value="fade">Плавное появление</option>
+              <option value="slide-up">Выезд снизу</option>
+              <option value="zoom">Увеличение</option>
+              <option value="bounce">Пружина</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 3. ПОВЕДЕНИЕ КНОПКИ «НЕТ» -->
+        <div class="settings-panel" data-panel="noBehavior">
+          <h3 class="panel-title">Поведение кнопки «Нет»</h3>
+          <div class="form-group">
+            <label>Режим</label>
+            <select id="noMode">
+              <option value="normal">Обычная</option>
+              <option value="run">Убегает от курсора</option>
+              <option value="teleport">Телепортируется</option>
+              <option value="jump">Прыгает</option>
+              <option value="spin">Вращается</option>
+              <option value="shrink">Уменьшается</option>
+              <option value="grow">Увеличивается</option>
+              <option value="fade">Исчезает</option>
+              <option value="transparent">Становится прозрачной</option>
+              <option value="text-change">Меняет текст</option>
+              <option value="combo">Комбинированный</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Скорость: <span id="noSpeedVal">5</span></label>
+            <input type="range" id="noSpeed" min="1" max="10" value="5">
+          </div>
+          <div class="form-group">
+            <label>Вероятность срабатывания: <span id="noChanceVal">100</span>%</label>
+            <input type="range" id="noChance" min="10" max="100" value="100" step="5">
+          </div>
+        </div>
+
+        <!-- 4. ФОТО -->
+        <div class="settings-panel" data-panel="photos">
+          <h3 class="panel-title">Фотографии</h3>
+          <div class="dropzone" id="photoDropzone">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
+            <p>Перетащите фото сюда<br>или нажмите для загрузки</p>
+            <input type="file" id="photoInput" accept="image/*" multiple hidden>
+          </div>
+          <div class="photo-grid" id="photoGrid"></div>
+          <div class="form-group">
+            <label>Скругление: <span id="photoRadiusVal">12</span>px</label>
+            <input type="range" id="photoRadius" min="0" max="50" value="12">
+          </div>
+          <div class="form-group">
+            <label>Рамка</label>
+            <input type="color" id="photoBorderColor" value="#ffffff">
+          </div>
+          <div class="form-group">
+            <label>Толщина рамки: <span id="photoBorderVal">0</span>px</label>
+            <input type="range" id="photoBorder" min="0" max="10" value="0">
+          </div>
+          <div class="form-group">
+            <label>Тень</label>
+            <select id="photoShadow">
+              <option value="none">Нет</option>
+              <option value="sm">Маленькая</option>
+              <option value="md" selected>Средняя</option>
+              <option value="lg">Большая</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Размер: <span id="photoSizeVal">100</span>%</label>
+            <input type="range" id="photoSize" min="20" max="100" value="100">
+          </div>
+          <div class="form-group">
+            <label>Прозрачность: <span id="photoOpacityVal">100</span>%</label>
+            <input type="range" id="photoOpacity" min="10" max="100" value="100">
+          </div>
+        </div>
+
+        <!-- 5. ГАЛЕРЕЯ -->
+        <div class="settings-panel" data-panel="gallery">
+          <h3 class="panel-title">Галерея</h3>
+          <div class="form-group">
+            <label>Режим отображения</label>
+            <select id="galleryMode">
+              <option value="grid">Сетка</option>
+              <option value="carousel">Карусель</option>
+              <option value="slider">Слайдер</option>
+              <option value="fullscreen">Полноэкранная</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Автопрокрутка</label>
+            <select id="galleryAuto">
+              <option value="off">Выключена</option>
+              <option value="on" selected>Включена</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Интервал (сек): <span id="galleryIntervalVal">3</span></label>
+            <input type="range" id="galleryInterval" min="1" max="10" value="3">
+          </div>
+        </div>
+
+        <!-- 6. МУЗЫКА -->
+        <div class="settings-panel" data-panel="music">
+          <h3 class="panel-title">Музыка</h3>
+          <div class="dropzone" id="musicDropzone">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+            <p>Перетащите MP3 сюда<br>или нажмите для загрузки</p>
+            <input type="file" id="musicInput" accept="audio/*" hidden>
+          </div>
+          <div class="music-info" id="musicInfo" style="display:none;">
+            <span id="musicName"></span>
+            <button class="btn-remove" id="musicRemove" title="Удалить">×</button>
+          </div>
+          <div class="form-group">
+            <label>Автовоспроизведение</label>
+            <select id="musicAutoplay">
+              <option value="off">Выключено</option>
+              <option value="on">Включено</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Громкость: <span id="musicVolumeVal">50</span>%</label>
+            <input type="range" id="musicVolume" min="0" max="100" value="50">
+          </div>
+          <div class="form-group">
+            <label>Зацикливание</label>
+            <select id="musicLoop">
+              <option value="on" selected>Включено</option>
+              <option value="off">Выключено</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Показать кнопку управления</label>
+            <select id="musicShowControl">
+              <option value="on" selected>Да</option>
+              <option value="off">Нет</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 7. ФОН -->
+        <div class="settings-panel" data-panel="background">
+          <h3 class="panel-title">Фон</h3>
+          <div class="form-group">
+            <label>Тип фона</label>
+            <select id="bgType">
+              <option value="solid">Однотонный цвет</option>
+              <option value="gradient">Градиент</option>
+              <option value="image">Изображение</option>
+              <option value="video">Видео</option>
+              <option value="gif">GIF</option>
+            </select>
+          </div>
+          <div class="form-group bg-solid-group">
+            <label>Цвет фона</label>
+            <input type="color" id="bgColor" value="#fce4ec">
+          </div>
+          <div class="form-group bg-gradient-group" style="display:none;">
+            <label>Градиент 1</label>
+            <input type="color" id="bgGrad1" value="#fce4ec">
+            <label style="margin-top:6px;">Градиент 2</label>
+            <input type="color" id="bgGrad2" value="#f8bbd0">
+            <label style="margin-top:6px;">Направление</label>
+            <select id="bgGradDir">
+              <option value="to bottom">Сверху вниз</option>
+              <option value="to right">Слева направо</option>
+              <option value="to bottom right">По диагонали</option>
+              <option value="radial">Радиальный</option>
+            </select>
+          </div>
+          <div class="form-group bg-image-group" style="display:none;">
+            <label>Ссылка на изображение</label>
+            <input type="text" id="bgImageUrl" placeholder="https://...">
+            <div class="dropzone small" id="bgImageDropzone" style="margin-top:8px;">
+              <p>Или загрузите файл</p>
+              <input type="file" id="bgImageInput" accept="image/*" hidden>
+            </div>
+          </div>
+          <div class="form-group bg-video-group" style="display:none;">
+            <label>Ссылка на видео</label>
+            <input type="text" id="bgVideoUrl" placeholder="https://...video.mp4">
+          </div>
+          <div class="form-group">
+            <label>Размытие: <span id="bgBlurVal">0</span>px</label>
+            <input type="range" id="bgBlur" min="0" max="20" value="0">
+          </div>
+          <div class="form-group">
+            <label>Параллакс</label>
+            <select id="bgParallax">
+              <option value="off">Выключен</option>
+              <option value="on">Включён</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 8. ТЕМЫ -->
+        <div class="settings-panel" data-panel="themes">
+          <h3 class="panel-title">Темы оформления</h3>
+          <div class="themes-grid" id="themesGrid"></div>
+        </div>
+
+        <!-- 9. ШРИФТЫ -->
+        <div class="settings-panel" data-panel="fonts">
+          <h3 class="panel-title">Шрифты</h3>
+          <div class="form-group">
+            <label>Основной шрифт</label>
+            <select id="fontFamily">
+              <option value="'Inter', sans-serif">Inter</option>
+              <option value="'Playfair Display', serif">Playfair Display</option>
+              <option value="'Cormorant Garamond', serif">Cormorant Garamond</option>
+              <option value="'Montserrat', sans-serif">Montserrat</option>
+              <option value="'Nunito', sans-serif">Nunito</option>
+              <option value="'Pacifico', cursive">Pacifico</option>
+              <option value="'Lora', serif">Lora</option>
+              <option value="'Raleway', sans-serif">Raleway</option>
+              <option value="'Great Vibes', cursive">Great Vibes</option>
+              <option value="'Dancing Script', cursive">Dancing Script</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Размер текста: <span id="fontSizeVal">18</span>px</label>
+            <input type="range" id="fontSize" min="12" max="32" value="18">
+          </div>
+          <div class="form-group">
+            <label>Толщина шрифта</label>
+            <select id="fontWeight">
+              <option value="300">Тонкий</option>
+              <option value="400" selected>Обычный</option>
+              <option value="500">Средний</option>
+              <option value="600">Полужирный</option>
+              <option value="700">Жирный</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Межбуквенное: <span id="fontSpacingVal">0</span>px</label>
+            <input type="range" id="fontSpacing" min="-2" max="10" value="0">
+          </div>
+          <div class="form-group">
+            <label>Высота строки: <span id="fontLineVal">1.6</span></label>
+            <input type="range" id="fontLine" min="1" max="3" value="1.6" step="0.1">
+          </div>
+          <div class="form-group">
+            <label>Дополнительные Google Fonts</label>
+            <input type="text" id="customFontName" placeholder="Название шрифта">
+            <button class="btn-small" id="btnAddFont">Добавить</button>
+            <div id="customFontsList" class="tags-list"></div>
+          </div>
+        </div>
+
+        <!-- 10. АНИМАЦИИ -->
+        <div class="settings-panel" data-panel="animations">
+          <h3 class="panel-title">Анимации фона</h3>
+          <div class="form-group">
+            <label>Тип анимации</label>
+            <select id="animType">
+              <option value="none">Нет</option>
+              <option value="hearts">Падающие сердечки</option>
+              <option value="petals">Лепестки роз</option>
+              <option value="confetti">Конфетти</option>
+              <option value="bubbles">Пузырьки</option>
+              <option value="snow">Снежинки</option>
+              <option value="stars">Звёзды</option>
+              <option value="soap">Мыльные пузыри</option>
+              <option value="sparks">Искры</option>
+              <option value="fireworks">Фейерверк</option>
+              <option value="butterflies">Бабочки</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Количество: <span id="animCountVal">30</span></label>
+            <input type="range" id="animCount" min="5" max="100" value="30">
+          </div>
+          <div class="form-group">
+            <label>Скорость: <span id="animSpeedVal">5</span></label>
+            <input type="range" id="animSpeed" min="1" max="10" value="5">
+          </div>
+        </div>
+
+        <!-- 11. ЭФФЕКТЫ -->
+        <div class="settings-panel" data-panel="effects">
+          <h3 class="panel-title">Эффекты</h3>
+          <div class="form-group">
+            <label>Печатающийся текст</label>
+            <select id="fxTyping">
+              <option value="off">Выключен</option>
+              <option value="on">Включён</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Анимация появления</label>
+            <select id="fxEntrance">
+              <option value="none">Нет</option>
+              <option value="fade">Fade</option>
+              <option value="zoom">Zoom</option>
+              <option value="rotate">Rotate</option>
+              <option value="slide">Slide</option>
+              <option value="bounce">Bounce</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Плавная прокрутка</label>
+            <select id="fxSmoothScroll">
+              <option value="off">Выключена</option>
+              <option value="on">Включена</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Параллакс контента</label>
+            <select id="fxParallax">
+              <option value="off">Выключен</option>
+              <option value="on">Включён</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 12. СООБЩЕНИЯ -->
+        <div class="settings-panel" data-panel="messages">
+          <h3 class="panel-title">Сообщения при нажатии «Нет»</h3>
+          <p class="panel-desc">Сообщения, которые появляются, когда девушка нажимает «Нет».</p>
+          <div id="messagesList" class="messages-list"></div>
+          <button class="btn-small" id="btnAddMessage">+ Добавить сообщение</button>
+        </div>
+
+        <!-- 13. ПОСЛЕ НАЖАТИЯ «ДА» -->
+        <div class="settings-panel" data-panel="yesAction">
+          <h3 class="panel-title">После нажатия «Да»</h3>
+          <div class="form-group">
+            <label>Показать сообщение</label>
+            <select id="yesShowMsg">
+              <option value="on" selected>Да</option>
+              <option value="off">Нет</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Запустить музыку</label>
+            <select id="yesMusic">
+              <option value="off">Нет</option>
+              <option value="on" selected>Да</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Конфетти</label>
+            <select id="yesConfetti">
+              <option value="off">Нет</option>
+              <option value="on" selected>Да</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Салют</label>
+            <select id="yesFireworks">
+              <option value="off">Нет</option>
+              <option value="on">Да</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Падающие сердечки</label>
+            <select id="yesHearts">
+              <option value="off">Нет</option>
+              <option value="on" selected>Да</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Показать фотографию</label>
+            <select id="yesPhoto">
+              <option value="off">Нет</option>
+              <option value="on">Да</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Показать видео (URL)</label>
+            <input type="text" id="yesVideoUrl" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label>Перейти на страницу (URL)</label>
+            <input type="text" id="yesRedirect" placeholder="https://...">
+          </div>
+          <div class="form-group">
+            <label>Показать таймер</label>
+            <select id="yesTimer">
+              <option value="off">Нет</option>
+              <option value="on">Да</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- 14. ТАЙМЕР -->
+        <div class="settings-panel" data-panel="timer">
+          <h3 class="panel-title">Обратный отсчёт</h3>
+          <div class="form-group">
+            <label>Тип таймера</label>
+            <select id="timerType">
+              <option value="none">Выключен</option>
+              <option value="date">До даты</option>
+              <option value="event">До события</option>
+            </select>
+          </div>
+          <div class="form-group timer-date-group">
+            <label>Дата и время</label>
+            <input type="datetime-local" id="timerDate">
+          </div>
+          <div class="form-group timer-event-group" style="display:none;">
+            <label>Название события</label>
+            <input type="text" id="timerEvent" placeholder="Наше свидание">
+          </div>
+          <div class="form-group">
+            <label>Размер цифр: <span id="timerSizeVal">48</span>px</label>
+            <input type="range" id="timerSize" min="24" max="96" value="48">
+          </div>
+        </div>
+
+        <!-- 15. ЦВЕТОВАЯ СХЕМА -->
+        <div class="settings-panel" data-panel="colors">
+          <h3 class="panel-title">Цветовая схема</h3>
+          <div class="form-group">
+            <label>Основной цвет</label>
+            <input type="color" id="colorPrimary" value="#e91e63">
+          </div>
+          <div class="form-group">
+            <label>Акцентный цвет</label>
+            <input type="color" id="colorAccent" value="#ff5722">
+          </div>
+          <div class="form-group">
+            <label>Цвет фона</label>
+            <input type="color" id="colorBg" value="#fce4ec">
+          </div>
+          <div class="form-group">
+            <label>Цвет кнопок</label>
+            <input type="color" id="colorButtons" value="#e91e63">
+          </div>
+          <div class="form-group">
+            <label>Цвет текста</label>
+            <input type="color" id="colorText" value="#333333">
+          </div>
+          <div class="form-group">
+            <label>Цвет границ</label>
+            <input type="color" id="colorBorder" value="#f8bbd0">
+          </div>
+          <div class="form-group">
+            <label>Цвет тени</label>
+            <input type="color" id="colorShadow" value="#00000020">
+          </div>
+        </div>
+
+        <!-- 16. SVG -->
+        <div class="settings-panel" data-panel="svg">
+          <h3 class="panel-title">SVG-элементы</h3>
+          <div class="dropzone" id="svgDropzone">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+            <p>Загрузите SVG-файл</p>
+            <input type="file" id="svgInput" accept=".svg,image/svg+xml" hidden>
+          </div>
+          <div id="svgList" class="svg-list"></div>
+        </div>
+
+        <!-- 17. УКРАШЕНИЯ -->
+        <div class="settings-panel" data-panel="decorations">
+          <h3 class="panel-title">Украшения</h3>
+          <p class="panel-desc">Нажмите на элемент, чтобы добавить его на страницу. Перетаскивайте в предпросмотре.</p>
+          <div class="decorations-grid" id="decorGrid">
+            <button class="decor-btn" data-decor="heart" title="Сердце">&#10084;</button>
+            <button class="decor-btn" data-decor="star" title="Звезда">&#9733;</button>
+            <button class="decor-btn" data-decor="flower" title="Цветок">&#10047;</button>
+            <button class="decor-btn" data-decor="butterfly" title="Бабочка">&#129419;</button>
+            <button class="decor-btn" data-decor="moon" title="Луна">&#9790;</button>
+            <button class="decor-btn" data-decor="sun" title="Солнце">&#9728;</button>
+            <button class="decor-btn" data-decor="ribbon" title="Лента">&#127872;</button>
+            <button class="decor-btn" data-decor="balloon" title="Шарик">&#127880;</button>
+            <button class="decor-btn" data-decor="sparkle" title="Искра">&#10024;</button>
+            <button class="decor-btn" data-decor="rose" title="Роза">&#127801;</button>
+          </div>
+          <div class="form-group" id="decorSettings" style="display:none;">
+            <label>Размер: <span id="decorSizeVal">40</span>px</label>
+            <input type="range" id="decorSize" min="16" max="120" value="40">
+            <label style="margin-top:8px;">Вращение: <span id="decorRotateVal">0</span>°</label>
+            <input type="range" id="decorRotate" min="0" max="360" value="0">
+            <label style="margin-top:8px;">Цвет</label>
+            <input type="color" id="decorColor" value="#e91e63">
+          </div>
+        </div>
+
+      </div><!-- /sidebar-content -->
+    </aside>
+
+    <!-- Разделитель для изменения размера -->
+    <div class="resizer" id="resizer"></div>
+
+    <!-- Правая часть — предпросмотр -->
+    <section class="preview-area" id="previewArea">
+      <div class="preview-frame" id="previewFrame">
+        <iframe id="previewIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+      </div>
+    </section>
+  </main>
+
+  <!-- Скрытый input для импорта -->
+  <input type="file" id="importInput" accept=".json" hidden>
+
+  <!-- Полноэкранный предпросмотр (модалка) -->
+  <div class="fullscreen-preview" id="fullscreenPreview" style="display:none;">
+    <button class="fullscreen-close" id="fullscreenClose">×</button>
+    <iframe id="fullscreenIframe" sandbox="allow-scripts allow-same-origin"></iframe>
+  </div>
+
+  <script src="js/state.js"></script>
+  <script src="js/modules/text.js"></script>
+  <script src="js/modules/buttons.js"></script>
+  <script src="js/modules/background.js"></script>
+  <script src="js/modules/fonts.js"></script>
+  <script src="js/modules/animations.js"></script>
+  <script src="js/modules/photos.js"></script>
+  <script src="js/modules/music.js"></script>
+  <script src="js/modules/themes.js"></script>
+  <script src="js/modules/gallery.js"></script>
+  <script src="js/modules/timer.js"></script>
+  <script src="js/modules/colors.js"></script>
+  <script src="js/modules/effects.js"></script>
+  <script src="js/modules/messages.js"></script>
+  <script src="js/modules/yesAction.js"></script>
+  <script src="js/modules/noBehavior.js"></script>
+  <script src="js/modules/svg.js"></script>
+  <script src="js/modules/decorations.js"></script>
+  <script src="js/preview.js"></script>
+  <script src="js/export.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

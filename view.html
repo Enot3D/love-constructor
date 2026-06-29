@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Приглашение</title>
+  <style>
+    body {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: 'Inter', sans-serif;
+      background: #fce4ec;
+    }
+    .loader {
+      text-align: center;
+      color: #e91e63;
+      font-size: 18px;
+      animation: pulse 1.5s ease infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+    .error {
+      text-align: center;
+      color: #c62828;
+      font-size: 16px;
+      padding: 40px;
+    }
+    iframe {
+      width: 100%;
+      height: 100vh;
+      border: none;
+      position: fixed;
+      inset: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="loader" id="loader">Загрузка приглашения...</div>
+  <div class="error" id="error" style="display:none;"></div>
+
+  <script>
+    /*
+     * Страница просмотра приглашения.
+     * Читает ID из URL (?id=XXXX), загружает данные из Firebase
+     * и отображает готовое приглашение в iframe.
+     */
+    (async function() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const loader = document.getElementById('loader');
+      const errorEl = document.getElementById('error');
+
+      if (!id) {
+        loader.style.display = 'none';
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Приглашение не найдено. Неверная ссылка.';
+        return;
+      }
+
+      try {
+        /* ============================================================
+           FIREBASE CONFIG
+           Замените значения ниже на ваши из Firebase Console.
+           Инструкция: см. файл SETUP.md
+           ============================================================ */
+        const FIREBASE_URL = 'https://ВАШ-ПРОЕКТ-default-rtdb.firebaseio.com';
+
+        const response = await fetch(FIREBASE_URL + '/invitations/' + id + '.json');
+        if (!response.ok) throw new Error('Ошибка сети');
+        const data = await response.json();
+
+        if (!data || !data.html) {
+          loader.style.display = 'none';
+          errorEl.style.display = 'block';
+          errorEl.textContent = 'Приглашение не найдено или было удалено.';
+          return;
+        }
+
+        /* Вставляем HTML приглашения в iframe */
+        loader.style.display = 'none';
+        const iframe = document.createElement('iframe');
+        iframe.sandbox = 'allow-scripts';
+        document.body.appendChild(iframe);
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        doc.open();
+        doc.write(data.html);
+        doc.close();
+
+        /* Обновляем заголовок страницы */
+        if (data.title) document.title = data.title + ' — Приглашение';
+
+      } catch (e) {
+        loader.style.display = 'none';
+        errorEl.style.display = 'block';
+        errorEl.textContent = 'Не удалось загрузить приглашение. Попробуйте позже.';
+        console.error(e);
+      }
+    })();
+  </script>
+</body>
+</html>
