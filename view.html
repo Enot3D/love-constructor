@@ -85,11 +85,8 @@
         loader.style.display = 'none';
         const iframe = document.createElement('iframe');
         iframe.sandbox = 'allow-scripts';
+        iframe.srcdoc = data.html;
         document.body.appendChild(iframe);
-        const doc = iframe.contentDocument || iframe.contentWindow.document;
-        doc.open();
-        doc.write(data.html);
-        doc.close();
 
         /* Обновляем заголовок страницы */
         if (data.title) document.title = data.title + ' — Приглашение';

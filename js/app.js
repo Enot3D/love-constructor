@@ -233,10 +233,7 @@ const App = {
       btn.addEventListener('click', () => {
         const html = Preview.generateHTML(true);
         overlay.style.display = 'block';
-        const doc = fsIframe.contentDocument || fsIframe.contentWindow.document;
-        doc.open();
-        doc.write(html);
-        doc.close();
+        fsIframe.srcdoc = html;
       });
     }
 

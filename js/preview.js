@@ -25,11 +25,7 @@ const Preview = {
   update() {
     if (!this._iframe) return;
     const html = this.generateHTML();
-    const doc = this._iframe.contentDocument || this._iframe.contentWindow?.document;
-    if (!doc) return;
-    doc.open();
-    doc.write(html);
-    doc.close();
+    this._iframe.srcdoc = html;
   },
 
   /* ---- Генерация полного HTML для предпросмотра ---- */
