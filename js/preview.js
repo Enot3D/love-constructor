@@ -332,11 +332,14 @@ const Preview = {
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 12px;
     margin: 24px 0;
+    justify-items: center;
   }
+  .photos-grid img { display: block; margin: 0 auto; object-fit: cover; }
   .photos-carousel {
     overflow: hidden;
-    margin: 24px 0;
+    margin: 24px auto;
     border-radius: ${s.photoRadius}px;
+    max-width: 100%;
   }
   .carousel-track {
     display: flex;
@@ -344,10 +347,12 @@ const Preview = {
   }
   .carousel-slide {
     flex: 0 0 100%;
+    display: flex;
+    justify-content: center;
   }
-  .carousel-slide img { width: 100%; }
-  .photos-slider { position: relative; margin: 24px 0; text-align: center; }
-  .photos-slider img { max-width: 100%; margin: 0 auto; }
+  .carousel-slide img { width: 100%; object-fit: cover; }
+  .photos-slider { position: relative; margin: 24px auto; text-align: center; max-width: 100%; }
+  .photos-slider img { max-width: 100%; margin: 0 auto; display: block; object-fit: cover; }
   .slider-dots { display: flex; justify-content: center; gap: 8px; margin-top: 12px; }
   .slider-dots .dot {
     width: 10px; height: 10px; border-radius: 50%; background: ${s.colorBorder}; cursor: pointer;
@@ -358,8 +363,9 @@ const Preview = {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 8px;
     margin: 24px 0;
+    justify-items: center;
   }
-  .photos-fullscreen img { width: 100%; cursor: pointer; }
+  .photos-fullscreen img { width: 100%; cursor: pointer; object-fit: cover; }
 
   .timer-block { margin: 24px 0; }
   .timer-label { font-size: 0.5em; margin-bottom: 8px; opacity: 0.7; }
