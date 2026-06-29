@@ -9,7 +9,7 @@ const ExportModule = {
      Замените URL на ваш из Firebase Console.
      Инструкция: https://console.firebase.google.com
      ============================================================ */
-  FIREBASE_URL: 'https://ВАШ-ПРОЕКТ-default-rtdb.firebaseio.com',
+  FIREBASE_URL: 'https://love-constructor-default-rtdb.firebaseio.com',
 
   /* ---- Экспорт в один HTML-файл ---- */
   exportSingleFile() {
