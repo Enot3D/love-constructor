@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ответы на приглашение</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+      color: #1d1d1f;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .header h1 {
+      font-size: 24px;
+      color: #e91e63;
+      margin-bottom: 8px;
+    }
+    .header p {
+      color: #6e6e73;
+      font-size: 14px;
+    }
+    .card {
+      background: rgba(255,255,255,0.8);
+      backdrop-filter: blur(20px);
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    }
+    .card h3 {
+      font-size: 14px;
+      color: #6e6e73;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+    .response-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .response-item .icon {
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .response-item .info {
+      flex: 1;
+    }
+    .response-item .date {
+      font-size: 16px;
+      font-weight: 600;
+      color: #e91e63;
+    }
+    .response-item .time {
+      font-size: 12px;
+      color: #999;
+      margin-top: 2px;
+    }
+    .response-item .status {
+      font-size: 13px;
+      color: #4caf50;
+      font-weight: 500;
+    }
+    .empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #999;
+    }
+    .empty .emoji {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+    .loader {
+      text-align: center;
+      padding: 40px;
+      color: #e91e63;
+      font-size: 16px;
+    }
+    .error {
+      text-align: center;
+      padding: 40px;
+      color: #c62828;
+    }
+    .refresh-btn {
+      display: block;
+      margin: 24px auto 0;
+      padding: 12px 32px;
+      background: #e91e63;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s;
+    }
+    .refresh-btn:hover { background: #d81558; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: rgba(255,255,255,0.8);
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+    .stat-card .num {
+      font-size: 28px;
+      font-weight: 700;
+      color: #e91e63;
+    }
+    .stat-card .label {
+      font-size: 11px;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📊 Ответы на приглашение</h1>
+      <p id="headerSub">Загрузка...</p>
+    </div>
+
+    <div class="stats" id="stats" style="display:none;">
+      <div class="stat-card">
+        <div class="num" id="statTotal">0</div>
+        <div class="label">Всего ответов</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statYes">0</div>
+        <div class="label">Нажали «Да»</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="statDates">0</div>
+        <div class="label">Выбрали дату</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Ответы</h3>
+      <div id="responsesList">
+        <div class="loader">Загрузка ответов...</div>
+      </div>
+    </div>
+
+    <button class="refresh-btn" id="refreshBtn">Обновить</button>
+  </div>
+
+  <script>
+    (async function() {
+      const params = new URLSearchParams(window.location.search);
+      const id = params.get('id');
+      const token = params.get('token');
+      const listEl = document.getElementById('responsesList');
+      const headerSub = document.getElementById('headerSub');
+
+      const FIREBASE_URL = 'https://love-constructor-default-rtdb.firebaseio.com';
+
+      if (!id || !token) {
+        listEl.innerHTML = '<div class="error">Неверная ссылка. Проверьте URL.</div>';
+        headerSub.textContent = 'Ошибка';
+        return;
+      }
+
+      async function load() {
+        listEl.innerHTML = '<div class="loader">Загрузка ответов...</div>';
+
+        try {
+          /* Проверяем токен */
+          const invResp = await fetch(FIREBASE_URL + '/invitations/' + id + '.json');
+          if (!invResp.ok) throw new Error('Ошибка сети');
+          const invData = await invResp.json();
+
+          if (!invData || invData.senderToken !== token) {
+            listEl.innerHTML = '<div class="error">Доступ запрещён. Неверный токен.</div>';
+            headerSub.textContent = 'Доступ запрещён';
+            return;
+          }
+
+          headerSub.textContent = invData.title || 'Приглашение';
+
+          /* Загружаем ответы */
+          const respResp = await fetch(FIREBASE_URL + '/responses/' + id + '.json');
+          const respData = await respResp.json();
+
+          if (!respData) {
+            listEl.innerHTML = `
+              <div class="empty">
+                <div class="emoji">📭</div>
+                <p>Пока нет ответов.</p>
+                <p style="margin-top:8px;font-size:13px;">Отправьте приглашение девушке и ждите!</p>
+              </div>
+            `;
+            document.getElementById('stats').style.display = 'none';
+            return;
+          }
+
+          const responses = Object.values(respData);
+
+          /* Статистика */
+          const total = responses.length;
+          const yesCount = responses.filter(r => r.clickedYes).length;
+          const dateCount = responses.filter(r => r.selectedDate).length;
+
+          document.getElementById('statTotal').textContent = total;
+          document.getElementById('statYes').textContent = yesCount;
+          document.getElementById('statDates').textContent = dateCount;
+          document.getElementById('stats').style.display = 'grid';
+
+          /* Список ответов */
+          const monthNames = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+          const dayNames = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
+
+          listEl.innerHTML = responses.map(r => {
+            let dateStr = 'Не выбрана';
+            if (r.selectedDate) {
+              const d = new Date(r.selectedDate + 'T00:00:00');
+              dateStr = d.getDate() + ' ' + monthNames[d.getMonth()] + ', ' + dayNames[d.getDay()];
+            }
+            const time = r.timestamp ? new Date(r.timestamp).toLocaleString('ru-RU') : '';
+            const yesBadge = r.clickedYes ? '<div class="status">✅ Нажала «Да»</div>' : '';
+
+            return `
+              <div class="response-item">
+                <div class="icon">${r.clickedYes ? '❤️' : r.selectedDate ? '📅' : '💬'}</div>
+                <div class="info">
+                  <div class="date">${dateStr}</div>
+                  ${yesBadge}
+                  <div class="time">${time}</div>
+                </div>
+              </div>
+            `;
+          }).join('');
+
+        } catch (e) {
+          listEl.innerHTML = '<div class="error">Ошибка загрузки: ' + e.message + '</div>';
+        }
+      }
+
+      load();
+      document.getElementById('refreshBtn').addEventListener('click', load);
+    })();
+  </script>
+</body>
+</html>

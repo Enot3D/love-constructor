@@ -66,13 +66,15 @@ const ExportModule = {
       /* Генерируем HTML приглашения */
       const html = Preview.generateHTML(true);
 
-      /* Создаём уникальный ID */
+      /* Создаём уникаль ID и секретный токен отправителя */
       const id = this._generateId();
+      const senderToken = this._generateId() + this._generateId();
 
       /* Данные для сохранения */
       const payload = {
         html: html,
         title: AppState.pageTitle,
+        senderToken: senderToken,
         createdAt: new Date().toISOString()
       };
 
@@ -92,11 +94,12 @@ const ExportModule = {
       setState('publishedId', id);
       ResponsesModule.setInviteId(id);
 
-      /* Формируем ссылку */
+      /* Формируем ссылки */
       const baseUrl = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
-      const link = baseUrl + 'view.html?id=' + id;
+      const inviteLink = baseUrl + 'view.html?id=' + id;
+      const trackerLink = baseUrl + 'track.html?id=' + id + '&token=' + senderToken;
 
-      return link;
+      return { inviteLink, trackerLink };
 
     } catch (e) {
       console.error('Ошибка публикации:', e);

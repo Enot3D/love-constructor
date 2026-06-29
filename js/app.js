@@ -210,13 +210,13 @@ const App = {
         btnPublish.querySelector('span').textContent = 'Публикация...';
         this._showToast('Публикация...');
 
-        const link = await ExportModule.publish();
+        const result = await ExportModule.publish();
 
         btnPublish.disabled = false;
         btnPublish.querySelector('span').textContent = 'Опубликовать';
 
-        if (link) {
-          this._showLinkModal(link);
+        if (result) {
+          this._showLinkModal(result.inviteLink, result.trackerLink);
         }
       });
     }
@@ -278,9 +278,9 @@ const App = {
   },
 
   /* ========================================================
-     МОДАЛЬНОЕ ОКНО С СЫЛКОЙ
+     МОДАЛЬНОЕ ОКНО С СЫЛКАМИ
      ======================================================== */
-  _showLinkModal(link) {
+  _showLinkModal(inviteLink, trackerLink) {
     /* Удаляем старое модальное окно если есть */
     const old = document.querySelector('.link-modal-overlay');
     if (old) old.remove();
@@ -297,30 +297,50 @@ const App = {
     const modal = document.createElement('div');
     modal.style.cssText = `
       background: #fff; border-radius: 20px; padding: 32px;
-      max-width: 520px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-      text-align: center; animation: slideUp 0.3s ease;
+      max-width: 560px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center; animation: slideUp 0.3s ease; max-height: 90vh; overflow-y: auto;
     `;
 
     modal.innerHTML = `
       <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
       <h2 style="margin: 0 0 8px; font-size: 20px; color: #1d1d1f;">Приглашение опубликовано!</h2>
-      <p style="margin: 0 0 16px; color: #6e6e73; font-size: 14px;">Отправьте эту ссылку девушке:</p>
-      <div style="display: flex; gap: 8px; margin-bottom: 16px;">
-        <input type="text" value="${link}" readonly id="linkInput"
+
+      <p style="margin: 16px 0 8px; color: #6e6e73; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ссылка для девушки:</p>
+      <div style="display: flex; gap: 8px; margin-bottom: 12px;">
+        <input type="text" value="${inviteLink}" readonly id="inviteLinkInput"
           style="flex: 1; padding: 12px 16px; border: 1px solid #e0e0e0; border-radius: 10px;
-          font-size: 14px; font-family: monospace; background: #f5f5f5; outline: none;">
-        <button id="copyLinkBtn"
-          style="padding: 12px 20px; background: #e91e63; color: #fff; border: none;
-          border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer;
-          transition: background 0.2s; white-space: nowrap;">
+          font-size: 13px; font-family: monospace; background: #f5f5f5; outline: none;">
+        <button id="copyInviteBtn"
+          style="padding: 12px 16px; background: #e91e63; color: #fff; border: none;
+          border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">
           Копировать
         </button>
       </div>
+
+      <p style="margin: 16px 0 8px; color: #6e6e73; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ваша ссылка для просмотра ответов:</p>
+      <div style="display: flex; gap: 8px; margin-bottom: 20px;">
+        <input type="text" value="${trackerLink}" readonly id="trackerLinkInput"
+          style="flex: 1; padding: 12px 16px; border: 1px solid #9c27b0; border-radius: 10px;
+          font-size: 13px; font-family: monospace; background: #f3e5f5; outline: none; color: #4a148c;">
+        <button id="copyTrackerBtn"
+          style="padding: 12px 16px; background: #9c27b0; color: #fff; border: none;
+          border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+          Копировать
+        </button>
+      </div>
+
+      <p style="margin: 0 0 16px; color: #999; font-size: 12px;">Сохраните вторую ссылку — по ней вы увидите ответы девушки.</p>
+
       <div style="display: flex; gap: 8px; justify-content: center;">
-        <a href="${link}" target="_blank"
+        <a href="${inviteLink}" target="_blank"
           style="padding: 10px 20px; background: #f5f5f5; color: #333; border: none;
           border-radius: 10px; font-size: 13px; cursor: pointer; text-decoration: none;">
           Открыть приглашение
+        </a>
+        <a href="${trackerLink}" target="_blank"
+          style="padding: 10px 20px; background: #f3e5f5; color: #4a148c; border: none;
+          border-radius: 10px; font-size: 13px; cursor: pointer; text-decoration: none;">
+          Открыть ответы
         </a>
         <button id="closeModalBtn"
           style="padding: 10px 20px; background: transparent; color: #6e6e73; border: 1px solid #e0e0e0;
@@ -333,18 +353,22 @@ const App = {
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 
-    /* Копирование ссылки */
-    modal.querySelector('#copyLinkBtn').addEventListener('click', () => {
-      const input = modal.querySelector('#linkInput');
-      input.select();
-      navigator.clipboard.writeText(input.value).then(() => {
-        modal.querySelector('#copyLinkBtn').textContent = 'Скопировано!';
-        setTimeout(() => { modal.querySelector('#copyLinkBtn').textContent = 'Копировать'; }, 2000);
-      }).catch(() => {
-        document.execCommand('copy');
-        modal.querySelector('#copyLinkBtn').textContent = 'Скопировано!';
+    /* Копирование ссылок */
+    const setupCopy = (btnId, inputId) => {
+      modal.querySelector('#' + btnId).addEventListener('click', () => {
+        const input = modal.querySelector('#' + inputId);
+        input.select();
+        navigator.clipboard.writeText(input.value).then(() => {
+          const btn = modal.querySelector('#' + btnId);
+          btn.textContent = '✓';
+          setTimeout(() => { btn.textContent = 'Копировать'; }, 2000);
+        }).catch(() => {
+          document.execCommand('copy');
+        });
       });
-    });
+    };
+    setupCopy('copyInviteBtn', 'inviteLinkInput');
+    setupCopy('copyTrackerBtn', 'trackerLinkInput');
 
     /* Закрытие */
     modal.querySelector('#closeModalBtn').addEventListener('click', () => overlay.remove());
