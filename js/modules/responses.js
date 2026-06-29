@@ -53,7 +53,8 @@ const ResponsesModule = {
         const time = r.timestamp
           ? new Date(r.timestamp).toLocaleString('ru-RU')
           : '';
-        const clickedYes = r.clickedYes ? '✅ Нажала «Да»' : '';
+        const clickedYes = r.clickedYes ? '✅ Нажала «Да»' : '⏳ Ожидает ответа';
+        const statusColor = r.clickedYes ? '#4caf50' : '#ff9800';
 
         return `
           <div class="message-item" style="flex-direction:column;align-items:flex-start;gap:4px;">
@@ -61,7 +62,7 @@ const ResponsesModule = {
               <strong style="color:var(--primary);font-size:14px;">📅 ${date}</strong>
               <span style="font-size:11px;color:#999;">${time}</span>
             </div>
-            ${clickedYes ? '<span style="font-size:12px;color:#4caf50;">' + clickedYes + '</span>' : ''}
+            <span style="font-size:12px;color:${statusColor};">${clickedYes}</span>
           </div>
         `;
       }).join('');

@@ -246,7 +246,7 @@
               dateStr = d.getDate() + ' ' + monthNames[d.getMonth()] + ', ' + dayNames[d.getDay()];
             }
             const time = r.timestamp ? new Date(r.timestamp).toLocaleString('ru-RU') : '';
-            const yesBadge = r.clickedYes ? '<div class="status">✅ Нажала «Да»</div>' : '';
+            const yesBadge = r.clickedYes ? '<div class="status">✅ Нажала «Да»</div>' : '<div class="status" style="color:#ff9800;">⏳ Ожидает ответа</div>';
 
             return `
               <div class="response-item">

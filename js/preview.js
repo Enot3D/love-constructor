@@ -153,7 +153,8 @@ const Preview = {
 
     /* --- Выбор даты --- */
     let datePickerHTML = '';
-    if (s.dpEnabled === 'on' && s.dpDates.length > 0) {
+    const dpActive = s.dpEnabled === 'on' && s.dpDates.length > 0;
+    if (dpActive) {
       const dpDatesFormatted = s.dpDates.map(d => {
         const dt = new Date(d + 'T00:00:00');
         const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
@@ -448,11 +449,11 @@ ${musicHTML}
   <h1 class="title">${this._esc(s.mainTitle)}</h1>
   <p class="main-text">${this._esc(s.mainText)}</p>
   ${photosHTML}
-  <div class="details">
+  ${!dpActive ? `<div class="details">
     <p>📅 ${this._esc(s.mainDate)}</p>
     <p>📍 ${this._esc(s.mainPlace)}</p>
     <p>Для: <strong>${this._esc(s.girlName)}</strong></p>
-  </div>
+  </div>` : ''}
   ${timerHTML}
   <div class="btns">
     <button class="btn btn-yes" id="btnYes">${this._esc(s.btnYesText)}</button>
@@ -510,8 +511,26 @@ ${yesHeartsCanvas}
     firebaseUrl: 'https://love-constructor-default-rtdb.firebaseio.com',
   })};
 
-  /* ---- Выбор даты ---- */
+  /* ---- Общий ID ответа для этой сессии ---- */
+  const responseId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
   let selectedDate = null;
+  let responseSent = false;
+
+  async function sendResponse(updates) {
+    if (!s.publishedId) return;
+    const payload = Object.assign({
+      timestamp: new Date().toISOString()
+    }, updates);
+    try {
+      await fetch(s.firebaseUrl + '/responses/' + s.publishedId + '/' + responseId + '.json', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+    } catch (e) { /* тихо */ }
+  }
+
+  /* ---- Выбор даты ---- */
   const dpOptions = document.querySelectorAll('.dp-option');
   const btnConfirm = document.getElementById('btnConfirmDate');
   const dpThankYou = document.getElementById('dpThankYou');
@@ -527,28 +546,16 @@ ${yesHeartsCanvas}
 
   if (btnConfirm) {
     btnConfirm.addEventListener('click', async function() {
-      if (!selectedDate || !s.publishedId) return;
+      if (!selectedDate) return;
       btnConfirm.disabled = true;
       btnConfirm.textContent = 'Отправка...';
 
-      try {
-        const respId = Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-        await fetch(s.firebaseUrl + '/responses/' + s.publishedId + '/' + respId + '.json', {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            selectedDate: selectedDate,
-            timestamp: new Date().toISOString()
-          })
-        });
-        btnConfirm.style.display = 'none';
-        document.querySelector('.dp-options').style.display = 'none';
-        document.querySelector('.dp-title').style.display = 'none';
-        if (dpThankYou) dpThankYou.style.display = 'block';
-      } catch (e) {
-        btnConfirm.textContent = 'Ошибка. Попробуй ещё';
-        btnConfirm.disabled = false;
-      }
+      await sendResponse({ selectedDate: selectedDate });
+
+      btnConfirm.style.display = 'none';
+      document.querySelector('.dp-options').style.display = 'none';
+      document.querySelector('.dp-title').style.display = 'none';
+      if (dpThankYou) dpThankYou.style.display = 'block';
     });
   }
 
@@ -656,21 +663,7 @@ ${yesHeartsCanvas}
       const yesScreen = document.getElementById('yesScreen');
       if (yesScreen) yesScreen.classList.add('show');
 
-      /* Сохраняем ответ «Да» в Firebase */
-      if (s.publishedId) {
-        try {
-          const respId = 'yes_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
-          fetch(s.firebaseUrl + '/responses/' + s.publishedId + '/' + respId + '.json', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              clickedYes: true,
-              selectedDate: selectedDate || null,
-              timestamp: new Date().toISOString()
-            })
-          });
-        } catch (e) { /* тихо игнорируем */ }
-      }
+      sendResponse({ clickedYes: true, selectedDate: selectedDate || null });
 
       if (s.yesMusic) {
         const audio = document.getElementById('bgMusic');
