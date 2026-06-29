@@ -453,11 +453,11 @@ ${musicHTML}
     <p>Для: <strong>${this._esc(s.girlName)}</strong></p>
   </div>
   ${timerHTML}
+  ${datePickerHTML}
   <div class="btns">
     <button class="btn btn-yes" id="btnYes">${this._esc(s.btnYesText)}</button>
     <button class="btn btn-no" id="btnNo">${this._esc(s.btnNoText)}</button>
   </div>
-  ${datePickerHTML}
   <p class="signature">${this._esc(s.mainSignature)}, ${this._esc(s.senderName)} ❤</p>
 </div>
 
