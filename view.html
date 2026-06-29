@@ -84,8 +84,8 @@
         /* Вставляем ID приглашения и Firebase URL в HTML */
         let html = data.html;
         html = html.replace(
-          '"publishedId":null',
-          '"publishedId":"' + id + '"'
+          '__INVITE_ID__',
+          id
         );
 
         /* Вставляем HTML приглашения в iframe */

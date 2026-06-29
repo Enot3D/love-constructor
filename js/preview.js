@@ -505,7 +505,7 @@ ${yesHeartsCanvas}
     dpEnabled: s.dpEnabled,
     dpDates: s.dpDates,
     dpThankYou: s.dpThankYou,
-    publishedId: s.publishedId,
+    publishedId: '__INVITE_ID__',
     firebaseUrl: 'https://love-constructor-default-rtdb.firebaseio.com',
   })};
 
