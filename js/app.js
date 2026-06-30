@@ -73,9 +73,6 @@ const App = {
         panels.forEach(p => p.classList.remove('active'));
         const target = document.querySelector(`[data-panel="${section}"]`);
         if (target) target.classList.add('active');
-
-        /* На мобильных — закрываем sidebar при выборе секции */
-        if (window.innerWidth <= 600) this._closeSidebar();
       });
     });
   },

@@ -823,7 +823,6 @@ html, body {
     min-width: 0 !important;
     max-width: 360px !important;
     transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-direction: column;
   }
   .sidebar.open { left: 0; }
   .sidebar-nav {
