@@ -757,6 +757,36 @@ html, body {
 }
 
 /* ============================================================
+   ГАМБУРГЕР-КНОПКА
+   ============================================================ */
+.hamburger-btn {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+.hamburger-btn:hover { background: rgba(0,0,0,0.05); }
+.hamburger-btn svg { flex-shrink: 0; }
+
+/* Оверлей для закрытия sidebar */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 199;
+}
+.sidebar-overlay.active { display: block; }
+
+/* ============================================================
    АДАПТИВНОСТЬ
    ============================================================ */
 @media (max-width: 900px) {
@@ -769,7 +799,62 @@ html, body {
 }
 
 @media (max-width: 600px) {
-  .sidebar { position: fixed; left: -100%; z-index: 200; top: var(--topbar-height); height: calc(100vh - var(--topbar-height)); transition: left 0.3s; }
+  .hamburger-btn { display: flex; }
+
+  .topbar { padding: 0 10px; gap: 6px; }
+  .topbar-left { min-width: auto; gap: 6px; }
+  .topbar-title { font-size: 12px; }
+  .topbar-center { gap: 2px; overflow-x: auto; flex-shrink: 1; min-width: 0; }
+  .topbar-right { min-width: auto; }
+
+  .topbar-btn { padding: 6px; }
+  .topbar-btn svg { width: 14px; height: 14px; }
+
+  .publish-btn span,
+  .preview-btn span { display: none; }
+
+  .sidebar {
+    position: fixed;
+    left: -100%;
+    z-index: 200;
+    top: var(--topbar-height);
+    height: calc(100vh - var(--topbar-height));
+    width: 85vw !important;
+    min-width: 0 !important;
+    max-width: 360px !important;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    flex-direction: column;
+  }
   .sidebar.open { left: 0; }
+  .sidebar-nav {
+    width: 48px;
+    min-width: 48px;
+    padding: 6px 4px;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .nav-item { font-size: 8px; padding: 6px 2px; }
+  .nav-item span { display: none; }
+  .sidebar-content { padding: 12px; }
+
   .resizer { display: none; }
+
+  .workspace { flex-direction: column; }
+  .preview-area { padding: 0; }
+  .preview-frame { border-radius: 0; }
+
+  .form-group input[type="text"],
+  .form-group input[type="url"],
+  .form-group input[type="datetime-local"],
+  .form-group textarea,
+  .form-group select {
+    font-size: 16px; /* предотвращает зум на iOS */
+  }
+
+  .decorations-grid { grid-template-columns: repeat(4, 1fr); }
+  .themes-grid { grid-template-columns: 1fr; }
+  .photo-grid { grid-template-columns: repeat(3, 1fr); }
+
+  /* Полноэкранный предпросмотр — кнопка закрытия крупнее */
+  .fullscreen-close { width: 48px; height: 48px; font-size: 28px; top: 12px; right: 12px; }
 }

@@ -1,6 +1,5 @@
 /* ============================================================
    МОДУЛЬ: ФОН
-   Управление типом фона и его параметрами.
    ============================================================ */
 const BackgroundModule = {
   init() {
@@ -13,14 +12,14 @@ const BackgroundModule = {
       this._toggleGroups(bgType.value);
     });
 
-    this._bind('#bgColor', 'bgColor');
-    this._bind('#bgGrad1', 'bgGrad1');
-    this._bind('#bgGrad2', 'bgGrad2');
-    this._bind('#bgGradDir', 'bgGradDir');
-    this._bind('#bgImageUrl', 'bgImageUrl');
-    this._bind('#bgVideoUrl', 'bgVideoUrl');
-    this._range('#bgBlur', 'bgBlur', '#bgBlurVal');
-    this._bind('#bgParallax', 'bgParallax');
+    bindField('#bgColor', 'bgColor');
+    bindField('#bgGrad1', 'bgGrad1');
+    bindField('#bgGrad2', 'bgGrad2');
+    bindField('#bgGradDir', 'bgGradDir');
+    bindField('#bgImageUrl', 'bgImageUrl');
+    bindField('#bgVideoUrl', 'bgVideoUrl');
+    bindRange('#bgBlur', 'bgBlur', '#bgBlurVal');
+    bindField('#bgParallax', 'bgParallax');
 
     /* Загрузка фонового изображения */
     const dz = document.querySelector('#bgImageDropzone');
@@ -50,25 +49,5 @@ const BackgroundModule = {
     document.querySelectorAll('.bg-gradient-group').forEach(el => el.style.display = type === 'gradient' ? '' : 'none');
     document.querySelectorAll('.bg-image-group').forEach(el => el.style.display = (type === 'image' || type === 'gif') ? '' : 'none');
     document.querySelectorAll('.bg-video-group').forEach(el => el.style.display = type === 'video' ? '' : 'none');
-  },
-
-  _bind(sel, key) {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.value = AppState[key] ?? '';
-    el.addEventListener('input', () => setState(key, el.value));
-    el.addEventListener('change', () => setState(key, el.value));
-  },
-
-  _range(sel, key, valSel) {
-    const el = document.querySelector(sel);
-    const valEl = document.querySelector(valSel);
-    if (!el) return;
-    el.value = AppState[key];
-    if (valEl) valEl.textContent = AppState[key];
-    el.addEventListener('input', () => {
-      setState(key, Number(el.value));
-      if (valEl) valEl.textContent = el.value;
-    });
   }
 };

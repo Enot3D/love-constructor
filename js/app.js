@@ -32,6 +32,9 @@ const App = {
     /* --- Навигация по секциям --- */
     this._initNav();
 
+    /* --- Мобильное меню --- */
+    this._initHamburger();
+
     /* --- Ресайзер панели --- */
     this._initResizer();
 
@@ -70,8 +73,37 @@ const App = {
         panels.forEach(p => p.classList.remove('active'));
         const target = document.querySelector(`[data-panel="${section}"]`);
         if (target) target.classList.add('active');
+
+        /* На мобильных — закрываем sidebar при выборе секции */
+        if (window.innerWidth <= 600) this._closeSidebar();
       });
     });
+  },
+
+  /* ========================================================
+     МОБИЛЬНОЕ ГАМБУРГЕР-МЕНЮ
+     ======================================================== */
+  _initHamburger() {
+    const btn = document.querySelector('#hamburgerBtn');
+    const sidebar = document.querySelector('#sidebar');
+    const overlay = document.querySelector('#sidebarOverlay');
+
+    if (!btn || !sidebar) return;
+
+    const toggle = () => {
+      const isOpen = sidebar.classList.toggle('open');
+      if (overlay) overlay.classList.toggle('active', isOpen);
+    };
+
+    btn.addEventListener('click', toggle);
+    if (overlay) overlay.addEventListener('click', () => this._closeSidebar());
+  },
+
+  _closeSidebar() {
+    const sidebar = document.querySelector('#sidebar');
+    const overlay = document.querySelector('#sidebarOverlay');
+    if (sidebar) sidebar.classList.remove('open');
+    if (overlay) overlay.classList.remove('active');
   },
 
   /* ========================================================

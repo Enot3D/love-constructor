@@ -1,6 +1,5 @@
 /* ============================================================
    МОДУЛЬ: МУЗЫКА
-   Загрузка MP3 и управление воспроизведением.
    ============================================================ */
 const MusicModule = {
   init() {
@@ -23,7 +22,6 @@ const MusicModule = {
       });
     }
 
-    /* Удаление */
     const rmBtn = document.querySelector('#musicRemove');
     if (rmBtn) {
       rmBtn.addEventListener('click', () => {
@@ -33,11 +31,10 @@ const MusicModule = {
       });
     }
 
-    /* Настройки */
-    this._bind('#musicAutoplay', 'musicAutoplay');
-    this._range('#musicVolume', 'musicVolume', '#musicVolumeVal');
-    this._bind('#musicLoop', 'musicLoop');
-    this._bind('#musicShowControl', 'musicShowControl');
+    bindField('#musicAutoplay', 'musicAutoplay', { changeOnly: true });
+    bindRange('#musicVolume', 'musicVolume', '#musicVolumeVal');
+    bindField('#musicLoop', 'musicLoop', { changeOnly: true });
+    bindField('#musicShowControl', 'musicShowControl', { changeOnly: true });
   },
 
   _load(file) {
@@ -62,24 +59,5 @@ const MusicModule = {
       if (info) info.style.display = 'none';
       if (dz) dz.style.display = '';
     }
-  },
-
-  _bind(sel, key) {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.value = AppState[key];
-    el.addEventListener('change', () => setState(key, el.value));
-  },
-
-  _range(sel, key, valSel) {
-    const el = document.querySelector(sel);
-    const valEl = document.querySelector(valSel);
-    if (!el) return;
-    el.value = AppState[key];
-    if (valEl) valEl.textContent = AppState[key];
-    el.addEventListener('input', () => {
-      setState(key, Number(el.value));
-      if (valEl) valEl.textContent = el.value;
-    });
   }
 };

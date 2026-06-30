@@ -1,7 +1,5 @@
 /* ============================================================
    МОДУЛЬ: СООБЩЕНИЯ
-   Список сообщений, появляющихся при нажатии «Нет».
-   Поддержка добавления, удаления, редактирования, перетаскивания.
    ============================================================ */
 const MessagesModule = {
   _dragIdx: null,
@@ -26,12 +24,11 @@ const MessagesModule = {
     list.innerHTML = AppState.messages.map((m, i) => `
       <div class="message-item" draggable="true" data-idx="${i}">
         <span class="msg-handle">☰</span>
-        <input type="text" value="${this._esc(m.text)}" data-idx="${i}">
+        <input type="text" value="${escHTML(m.text)}" data-idx="${i}">
         <button class="btn-remove" data-idx="${i}">×</button>
       </div>
     `).join('');
 
-    /* Редактирование текста */
     list.querySelectorAll('input').forEach(inp => {
       inp.addEventListener('input', () => {
         const idx = Number(inp.dataset.idx);
@@ -40,7 +37,6 @@ const MessagesModule = {
       });
     });
 
-    /* Удаление */
     list.querySelectorAll('.btn-remove').forEach(btn => {
       btn.addEventListener('click', () => {
         const idx = Number(btn.dataset.idx);
@@ -50,7 +46,6 @@ const MessagesModule = {
       });
     });
 
-    /* Drag & Drop сортировка */
     list.querySelectorAll('.message-item').forEach(item => {
       item.addEventListener('dragstart', () => {
         this._dragIdx = Number(item.dataset.idx);
@@ -68,9 +63,5 @@ const MessagesModule = {
         this._dragIdx = null;
       });
     });
-  },
-
-  _esc(str) {
-    return str.replace(/"/g, '&quot;').replace(/</g, '&lt;');
   }
 };

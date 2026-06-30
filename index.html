@@ -14,6 +14,9 @@
   <!-- ===== ВЕРХНЯЯ ПАНЕЛЬ ===== -->
   <header class="topbar">
     <div class="topbar-left">
+      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Меню">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
       <span class="topbar-logo">&#10084;</span>
       <span class="topbar-title">Love Constructor</span>
     </div>
@@ -53,6 +56,9 @@
 
   <!-- ===== ОСНОВНОЙ КОНТЕЙНЕР ===== -->
   <main class="workspace">
+
+    <!-- Оверлей для мобильного sidebar -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
     <!-- Левая панель — настройки -->
     <aside class="sidebar" id="sidebar">
@@ -796,6 +802,7 @@
   </div>
 
   <script src="js/state.js"></script>
+  <script src="js/modules/utils.js"></script>
   <script src="js/modules/text.js"></script>
   <script src="js/modules/buttons.js"></script>
   <script src="js/modules/background.js"></script>

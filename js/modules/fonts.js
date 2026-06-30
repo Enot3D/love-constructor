@@ -1,14 +1,13 @@
 /* ============================================================
    МОДУЛЬ: ШРИФТЫ
-   Настройка типографики.
    ============================================================ */
 const FontsModule = {
   init() {
-    this._bind('#fontFamily', 'fontFamily');
-    this._range('#fontSize', 'fontSize', '#fontSizeVal');
-    this._bind('#fontWeight', 'fontWeight');
-    this._range('#fontSpacing', 'fontSpacing', '#fontSpacingVal');
-    this._range('#fontLine', 'fontLine', '#fontLineVal');
+    bindField('#fontFamily', 'fontFamily');
+    bindRange('#fontSize', 'fontSize', '#fontSizeVal');
+    bindField('#fontWeight', 'fontWeight');
+    bindRange('#fontSpacing', 'fontSpacing', '#fontSpacingVal');
+    bindRange('#fontLine', 'fontLine', '#fontLineVal');
 
     /* Добавление пользовательских Google Fonts */
     const btnAdd = document.querySelector('#btnAddFont');
@@ -21,7 +20,6 @@ const FontsModule = {
         setState('customFonts', [...AppState.customFonts]);
         nameInput.value = '';
         this._renderCustomFonts();
-        /* Загружаем шрифт динамически */
         const link = document.createElement('link');
         link.href = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g, '+')}&display=swap`;
         link.rel = 'stylesheet';
@@ -43,27 +41,6 @@ const FontsModule = {
         setState('customFonts', [...AppState.customFonts]);
         this._renderCustomFonts();
       });
-    });
-  },
-
-  _bind(sel, key) {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.value = AppState[key];
-    el.addEventListener('input', () => setState(key, el.value));
-    el.addEventListener('change', () => setState(key, el.value));
-  },
-
-  _range(sel, key, valSel) {
-    const el = document.querySelector(sel);
-    const valEl = document.querySelector(valSel);
-    if (!el) return;
-    el.value = AppState[key];
-    if (valEl) valEl.textContent = AppState[key];
-    el.addEventListener('input', () => {
-      const v = Number(el.value);
-      setState(key, v);
-      if (valEl) valEl.textContent = v;
     });
   }
 };

@@ -1,19 +1,11 @@
 /* ============================================================
    МОДУЛЬ: ЭФФЕКТЫ
-   Печатающийся текст, анимации появления, параллакс.
    ============================================================ */
 const EffectsModule = {
   init() {
-    this._bind('#fxTyping', 'fxTyping');
-    this._bind('#fxEntrance', 'fxEntrance');
-    this._bind('#fxSmoothScroll', 'fxSmoothScroll');
-    this._bind('#fxParallax', 'fxParallax');
-  },
-
-  _bind(sel, key) {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.value = AppState[key];
-    el.addEventListener('change', () => setState(key, el.value));
+    bindField('#fxTyping', 'fxTyping', { changeOnly: true });
+    bindField('#fxEntrance', 'fxEntrance', { changeOnly: true });
+    bindField('#fxSmoothScroll', 'fxSmoothScroll', { changeOnly: true });
+    bindField('#fxParallax', 'fxParallax', { changeOnly: true });
   }
 };

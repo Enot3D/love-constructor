@@ -1,12 +1,10 @@
 /* ============================================================
    МОДУЛЬ: ФОТО
-   Загрузка, превью, сортировка и настройка фотографий.
    ============================================================ */
 const PhotosModule = {
   _dragIdx: null,
 
   init() {
-    /* Drag & Drop загрузка */
     const dz = document.querySelector('#photoDropzone');
     const fi = document.querySelector('#photoInput');
 
@@ -23,13 +21,12 @@ const PhotosModule = {
       fi.addEventListener('change', () => this._handleFiles(fi.files));
     }
 
-    /* Настройки фото */
-    this._range('#photoRadius', 'photoRadius', '#photoRadiusVal');
-    this._bind('#photoBorderColor', 'photoBorderColor');
-    this._range('#photoBorder', 'photoBorder', '#photoBorderVal');
-    this._bind('#photoShadow', 'photoShadow');
-    this._range('#photoSize', 'photoSize', '#photoSizeVal');
-    this._range('#photoOpacity', 'photoOpacity', '#photoOpacityVal');
+    bindRange('#photoRadius', 'photoRadius', '#photoRadiusVal');
+    bindField('#photoBorderColor', 'photoBorderColor');
+    bindRange('#photoBorder', 'photoBorder', '#photoBorderVal');
+    bindField('#photoShadow', 'photoShadow', { changeOnly: true });
+    bindRange('#photoSize', 'photoSize', '#photoSizeVal');
+    bindRange('#photoOpacity', 'photoOpacity', '#photoOpacityVal');
   },
 
   _handleFiles(files) {
@@ -62,11 +59,9 @@ const PhotosModule = {
       </div>
     `).join('');
 
-    /* Обработчики */
     grid.querySelectorAll('.photo-thumb').forEach(thumb => {
       const idx = Number(thumb.dataset.idx);
 
-      /* Сделать главным */
       thumb.querySelector('[data-action="main"]').addEventListener('click', e => {
         e.stopPropagation();
         AppState.photos.forEach((p, i) => p.isMain = i === idx);
@@ -74,7 +69,6 @@ const PhotosModule = {
         this._renderGrid();
       });
 
-      /* Удалить */
       thumb.querySelector('[data-action="delete"]').addEventListener('click', e => {
         e.stopPropagation();
         AppState.photos.splice(idx, 1);
@@ -85,7 +79,6 @@ const PhotosModule = {
         this._renderGrid();
       });
 
-      /* Drag для сортировки */
       thumb.addEventListener('dragstart', e => {
         this._dragIdx = idx;
         e.dataTransfer.effectAllowed = 'move';
@@ -102,26 +95,6 @@ const PhotosModule = {
         }
         this._dragIdx = null;
       });
-    });
-  },
-
-  _bind(sel, key) {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.value = AppState[key];
-    el.addEventListener('input', () => setState(key, el.value));
-    el.addEventListener('change', () => setState(key, el.value));
-  },
-
-  _range(sel, key, valSel) {
-    const el = document.querySelector(sel);
-    const valEl = document.querySelector(valSel);
-    if (!el) return;
-    el.value = AppState[key];
-    if (valEl) valEl.textContent = AppState[key];
-    el.addEventListener('input', () => {
-      setState(key, Number(el.value));
-      if (valEl) valEl.textContent = el.value;
     });
   }
 };

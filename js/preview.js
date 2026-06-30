@@ -166,7 +166,7 @@ const Preview = {
       });
       datePickerHTML = `
         <div class="date-picker-block" id="datePickerBlock">
-          <div class="dp-title">${this._esc(s.dpTitle)}</div>
+          <div class="dp-title">${escHTML(s.dpTitle)}</div>
           <div class="dp-options">
             ${dpDatesFormatted.map(d => `<button class="dp-option" data-date="${d.value}">${d.label}</button>`).join('')}
           </div>
@@ -192,7 +192,7 @@ const Preview = {
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>${this._esc(s.pageTitle)}</title>
+<title>${escHTML(s.pageTitle)}</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="${fontsLink}" rel="stylesheet">
@@ -441,34 +441,53 @@ const Preview = {
   @keyframes typing { from { width: 0; } to { width: 100%; } }
   @keyframes blink { 50% { border-color: transparent; } }
   @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+
+  @media (max-width: 600px) {
+    body { padding: 24px 16px; font-size: ${Math.max(14, s.fontSize - 2)}px; }
+    .container { max-width: 100%; }
+    .title { font-size: 1.5em; }
+    .btn { padding: 12px 28px; font-size: ${Math.max(14, s.btnSize - 2)}px; width: 100%; max-width: 280px; }
+    .btns { flex-direction: column; align-items: center; gap: 12px; }
+    .details { padding: 12px; }
+    .photos-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+    .photos-fullscreen { grid-template-columns: 1fr; }
+    .dp-options { flex-direction: column; }
+    .dp-option { width: 100%; }
+    .music-control { bottom: 12px; right: 12px; }
+    .music-control button { width: 40px; height: 40px; font-size: 16px; }
+    .yes-screen h1 { font-size: 1.8em; }
+    .yes-screen { padding: 24px 16px; }
+    .message-popup { padding: 16px 20px; font-size: 1em; width: 90%; }
+    .timer-block { font-size: ${Math.max(24, s.timerSize * 0.7)}px !important; }
+  }
 </style>
 </head>
 <body>
 
-${s.bgType === 'video' && s.bgVideoUrl ? `<video class="bg-video" autoplay muted loop><source src="${this._esc(s.bgVideoUrl)}" type="video/mp4"></video>` : ''}
+${s.bgType === 'video' && s.bgVideoUrl ? `<video class="bg-video" autoplay muted loop><source src="${escHTML(s.bgVideoUrl)}" type="video/mp4"></video>` : ''}
 ${animHTML}
 ${musicHTML}
 
 <div class="container"${typingAttr}>
-  <h1 class="title">${this._esc(s.mainTitle)}</h1>
-  <p class="main-text">${this._esc(s.mainText)}</p>
+  <h1 class="title">${escHTML(s.mainTitle)}</h1>
+  <p class="main-text">${escHTML(s.mainText)}</p>
   ${photosHTML}
   <div class="details">
-    ${!dpActive ? `<p>📅 ${this._esc(s.mainDate)}</p>` : ''}
-    <p>📍 ${this._esc(s.mainPlace)}</p>
-    <p>Для: <strong>${this._esc(s.girlName)}</strong></p>
+    ${!dpActive ? `<p>📅 ${escHTML(s.mainDate)}</p>` : ''}
+    <p>📍 ${escHTML(s.mainPlace)}</p>
+    <p>Для: <strong>${escHTML(s.girlName)}</strong></p>
   </div>
   ${timerHTML}
   ${datePickerHTML}
   <div class="btns">
-    <button class="btn btn-yes" id="btnYes">${this._esc(s.btnYesText)}</button>
-    <button class="btn btn-no" id="btnNo">${this._esc(s.btnNoText)}</button>
+    <button class="btn btn-yes" id="btnYes">${escHTML(s.btnYesText)}</button>
+    <button class="btn btn-no" id="btnNo">${escHTML(s.btnNoText)}</button>
   </div>
-  <p class="signature">${this._esc(s.mainSignature)}, ${this._esc(s.senderName)} ❤</p>
+  <p class="signature">${escHTML(s.mainSignature)}, ${escHTML(s.senderName)} ❤</p>
 </div>
 
 <div class="yes-screen" id="yesScreen">
-  <h1>${this._esc(s.yesText)}</h1>
+  <h1>${escHTML(s.yesText)}</h1>
   <div id="yesExtra"></div>
 </div>
 
@@ -550,85 +569,93 @@ ${yesHeartsCanvas}
   let msgIdx = 0;
   let shrinkScale = 1;
 
-  if (btnNo) {
-    btnNo.addEventListener('mouseenter', function() {
-      if (Math.random() * 100 > s.noChance) return;
-      const speed = s.noSpeed;
+  function applyNoBehavior() {
+    if (Math.random() * 100 > s.noChance) return;
+    const speed = s.noSpeed;
 
-      switch(s.noMode) {
-        case 'run': {
-          const rect = btnNo.getBoundingClientRect();
-          const x = Math.random() * (window.innerWidth - 150);
-          const y = Math.random() * (window.innerHeight - 60);
-          btnNo.style.position = 'fixed';
-          btnNo.style.left = x + 'px';
-          btnNo.style.top = y + 'px';
-          btnNo.style.transition = (1 / speed * 0.5) + 's ease';
-          btnNo.style.zIndex = '9000';
-          break;
-        }
-        case 'teleport': {
-          btnNo.style.position = 'fixed';
-          btnNo.style.left = Math.random() * (window.innerWidth - 150) + 'px';
-          btnNo.style.top = Math.random() * (window.innerHeight - 60) + 'px';
-          btnNo.style.transition = '0.05s';
-          btnNo.style.zIndex = '9000';
-          break;
-        }
-        case 'jump': {
-          btnNo.style.animation = 'none';
-          void btnNo.offsetHeight;
-          btnNo.style.animation = 'btnJump ' + (1 / speed) + 's ease';
-          break;
-        }
-        case 'spin': {
-          btnNo.style.transition = (1 / speed) + 's ease';
-          btnNo.style.transform = 'rotate(' + (360 * speed) + 'deg)';
-          setTimeout(() => { btnNo.style.transform = ''; }, 1000 / speed * 2);
-          break;
-        }
-        case 'shrink': {
-          shrinkScale *= 0.7;
-          btnNo.style.transition = '0.3s';
-          btnNo.style.transform = 'scale(' + shrinkScale + ')';
-          break;
-        }
-        case 'grow': {
-          shrinkScale *= 1.3;
-          btnNo.style.transition = '0.3s';
-          btnNo.style.transform = 'scale(' + shrinkScale + ')';
-          break;
-        }
-        case 'fade': {
-          let op = parseFloat(btnNo.style.opacity || 1);
-          op -= 0.15;
-          if (op < 0.05) op = 0.05;
-          btnNo.style.transition = '0.3s';
-          btnNo.style.opacity = op;
-          break;
-        }
-        case 'transparent': {
-          btnNo.style.transition = '0.3s';
-          btnNo.style.opacity = '0.1';
-          btnNo.style.pointerEvents = 'none';
-          setTimeout(() => { btnNo.style.opacity = ''; btnNo.style.pointerEvents = ''; }, 1500);
-          break;
-        }
-        case 'text-change': {
-          if (s.messages.length) {
-            btnNo.textContent = s.messages[msgIdx % s.messages.length].text;
-            msgIdx++;
-          }
-          break;
-        }
-        case 'combo': {
-          const modes = ['run','teleport','jump','spin','shrink','text-change'];
-          const pick = modes[Math.floor(Math.random() * modes.length)];
-          btnNo.dispatchEvent(new Event('mouseenter'));
-          break;
-        }
+    switch(s.noMode) {
+      case 'run': {
+        const x = Math.random() * (window.innerWidth - 150);
+        const y = Math.random() * (window.innerHeight - 60);
+        btnNo.style.position = 'fixed';
+        btnNo.style.left = x + 'px';
+        btnNo.style.top = y + 'px';
+        btnNo.style.transition = (1 / speed * 0.5) + 's ease';
+        btnNo.style.zIndex = '9000';
+        break;
       }
-    });
+      case 'teleport': {
+        btnNo.style.position = 'fixed';
+        btnNo.style.left = Math.random() * (window.innerWidth - 150) + 'px';
+        btnNo.style.top = Math.random() * (window.innerHeight - 60) + 'px';
+        btnNo.style.transition = '0.05s';
+        btnNo.style.zIndex = '9000';
+        break;
+      }
+      case 'jump': {
+        btnNo.style.animation = 'none';
+        void btnNo.offsetHeight;
+        btnNo.style.animation = 'btnJump ' + (1 / speed) + 's ease';
+        break;
+      }
+      case 'spin': {
+        btnNo.style.transition = (1 / speed) + 's ease';
+        btnNo.style.transform = 'rotate(' + (360 * speed) + 'deg)';
+        setTimeout(() => { btnNo.style.transform = ''; }, 1000 / speed * 2);
+        break;
+      }
+      case 'shrink': {
+        shrinkScale *= 0.7;
+        btnNo.style.transition = '0.3s';
+        btnNo.style.transform = 'scale(' + shrinkScale + ')';
+        break;
+      }
+      case 'grow': {
+        shrinkScale *= 1.3;
+        btnNo.style.transition = '0.3s';
+        btnNo.style.transform = 'scale(' + shrinkScale + ')';
+        break;
+      }
+      case 'fade': {
+        let op = parseFloat(btnNo.style.opacity || 1);
+        op -= 0.15;
+        if (op < 0.05) op = 0.05;
+        btnNo.style.transition = '0.3s';
+        btnNo.style.opacity = op;
+        break;
+      }
+      case 'transparent': {
+        btnNo.style.transition = '0.3s';
+        btnNo.style.opacity = '0.1';
+        btnNo.style.pointerEvents = 'none';
+        setTimeout(() => { btnNo.style.opacity = ''; btnNo.style.pointerEvents = ''; }, 1500);
+        break;
+      }
+      case 'text-change': {
+        if (s.messages.length) {
+          btnNo.textContent = s.messages[msgIdx % s.messages.length].text;
+          msgIdx++;
+        }
+        break;
+      }
+      case 'combo': {
+        const modes = ['run','teleport','jump','spin','shrink','text-change'];
+        const pick = modes[Math.floor(Math.random() * modes.length)];
+        const saved = s.noMode;
+        s.noMode = pick;
+        applyNoBehavior();
+        s.noMode = saved;
+        break;
+      }
+    }
+  }
+
+  if (btnNo) {
+    btnNo.addEventListener('mouseenter', applyNoBehavior);
+    btnNo.addEventListener('touchstart', function(e) {
+      e.preventDefault();
+      applyNoBehavior();
+    }, { passive: false });
 
     btnNo.addEventListener('click', function(e) {
       e.preventDefault();
@@ -904,13 +931,5 @@ ${yesHeartsCanvas}
 </html>`;
   },
 
-  /* ---- Экранирование HTML ---- */
-  _esc(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
+
 };

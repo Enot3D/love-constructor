@@ -1,15 +1,13 @@
 /* ============================================================
    МОДУЛЬ: ВЫБОР ДАТЫ
-   Позволяет девушке выбрать удобную дату для свидания.
    ============================================================ */
 const DatePickerModule = {
   init() {
-    this._bind('#dpEnabled', 'dpEnabled');
-    this._bind('#dpTitle', 'dpTitle');
-    this._bind('#dpConfirmText', 'dpConfirmText');
-    this._bind('#dpThankYou', 'dpThankYou');
+    bindField('#dpEnabled', 'dpEnabled');
+    bindField('#dpTitle', 'dpTitle');
+    bindField('#dpConfirmText', 'dpConfirmText');
+    bindField('#dpThankYou', 'dpThankYou');
 
-    /* Кнопка добавления даты */
     const btnAdd = document.querySelector('#btnAddDate');
     const dateInput = document.querySelector('#dpNewDate');
     if (btnAdd && dateInput) {
@@ -24,7 +22,6 @@ const DatePickerModule = {
       });
     }
 
-    /* Кнопка обновления ответов */
     const btnRefresh = document.querySelector('#btnRefreshResponses');
     if (btnRefresh) {
       btnRefresh.addEventListener('click', () => ResponsesModule.load());
@@ -60,13 +57,5 @@ const DatePickerModule = {
         this._renderDates();
       });
     });
-  },
-
-  _bind(sel, key) {
-    const el = document.querySelector(sel);
-    if (!el) return;
-    el.value = AppState[key] ?? '';
-    el.addEventListener('input', () => setState(key, el.value));
-    el.addEventListener('change', () => setState(key, el.value));
   }
 };
