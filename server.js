@@ -98,8 +98,7 @@ app.use('/api', (req, res) => {
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
   res.setHeader('Cache-Control', 'no-store');
-  const message = config.nodeEnv === 'production' ? 'Ошибка сервера' : err.message;
-  res.status(500).json({ error: message });
+  res.status(500).json({ error: err.message || 'Ошибка сервера' });
 });
 
 // Start server
