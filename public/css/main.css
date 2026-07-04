@@ -802,13 +802,14 @@ html, body {
 @media (max-width: 600px) {
   .hamburger-btn { display: flex; }
 
-  .topbar { padding: 0 10px; gap: 6px; }
+  .topbar { padding: 0 10px; gap: 6px; flex-wrap: nowrap; }
   .topbar-left { min-width: auto; gap: 6px; }
   .topbar-title { font-size: 12px; }
-  .topbar-center { gap: 2px; overflow-x: visible; flex-shrink: 1; min-width: 0; flex-wrap: wrap; justify-content: center; }
-  .topbar-right { min-width: auto; }
+  .topbar-center { gap: 2px; overflow-x: auto; flex-shrink: 1; min-width: 0; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .topbar-center::-webkit-scrollbar { display: none; }
+  .topbar-right { min-width: auto; flex-shrink: 0; }
 
-  .topbar-btn { padding: 8px; min-width: 36px; min-height: 36px; touch-action: manipulation; }
+  .topbar-btn { padding: 6px 6px; min-width: 32px; min-height: 32px; touch-action: manipulation; }
   .topbar-btn svg { width: 16px; height: 16px; }
 
   /* Скрываем второстепенные кнопки на мобильных */
@@ -817,8 +818,8 @@ html, body {
   #btnExport,
   #btnImport { display: none; }
 
-  .publish-btn { padding: 10px 14px; }
-  .publish-btn span { display: inline; font-size: 12px; }
+  .publish-btn { padding: 6px 10px; white-space: nowrap; }
+  .publish-btn span { display: none; }
   .preview-btn span { display: none; }
 
   .sidebar {
