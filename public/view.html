@@ -95,24 +95,6 @@
         if (data.title) document.title = data.title + ' — Приглашение';
 
       } catch (e) {
-        // Fallback: try Firebase directly (backward compatibility)
-        try {
-          const FIREBASE_URL = 'https://love-constructor-default-rtdb.firebaseio.com';
-          const fbResp = await fetch(FIREBASE_URL + '/invitations/' + id + '.json');
-          const fbData = await fbResp.json();
-
-          if (fbData && fbData.html) {
-            let html = fbData.html.replace('__INVITE_ID__', id);
-            loader.style.display = 'none';
-            const iframe = document.createElement('iframe');
-            const blob = new Blob([html], { type: 'text/html' });
-            iframe.src = URL.createObjectURL(blob);
-            document.body.appendChild(iframe);
-            if (fbData.title) document.title = fbData.title + ' — Приглашение';
-            return;
-          }
-        } catch (e2) { /* ignore */ }
-
         loader.style.display = 'none';
         errorEl.style.display = 'block';
         errorEl.textContent = 'Не удалось загрузить приглашение. Попробуйте позже.';
