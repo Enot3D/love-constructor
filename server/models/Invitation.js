@@ -1,11 +1,11 @@
 const { query } = require('../db');
 
 const Invitation = {
-  async create({ id, userId, title, html, senderToken }) {
+  async create({ id, userId, title, girlName, html, senderToken }) {
     await query(
-      `INSERT INTO invitations (id, user_id, title, html, sender_token)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [id, userId, title, html, senderToken]
+      `INSERT INTO invitations (id, user_id, title, girl_name, html, sender_token)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [id, userId, title, girlName || null, html, senderToken]
     );
     return this.findById(id);
   },
@@ -17,7 +17,7 @@ const Invitation = {
 
   async findByUserId(userId) {
     const result = await query(
-      `SELECT id, title, created_at, is_active FROM invitations WHERE user_id = $1 AND is_active = 1 ORDER BY created_at DESC`,
+      `SELECT id, title, girl_name, created_at, is_active FROM invitations WHERE user_id = $1 AND is_active = 1 ORDER BY created_at DESC`,
       [userId]
     );
     return result.rows;

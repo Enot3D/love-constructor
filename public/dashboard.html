@@ -256,6 +256,7 @@
             <div class="inv-icon">💌</div>
             <div class="inv-info">
               <div class="inv-title">${esc(inv.title || 'Без названия')}</div>
+              ${inv.girl_name ? `<div class="inv-date" style="color:#e91e63;font-weight:600;">Для: ${esc(inv.girl_name)}</div>` : ''}
               <div class="inv-date">${dateStr}</div>
               <div class="inv-stats">
                 <span class="inv-stat">Ответов: <strong>${total}</strong></span>

@@ -19,13 +19,14 @@ function generateId() {
 // Publish a new invitation (auth required)
 router.post('/', authMiddleware, publishLimiter, async (req, res) => {
   try {
-    const { html, title } = req.body;
+    const { html, title, girlName } = req.body;
     if (!html || typeof html !== 'string') {
       return res.status(400).json({ error: 'HTML обязателен' });
     }
 
-    // Validate and sanitize title
+    // Validate and sanitize
     const cleanTitle = title ? String(title).replace(/<[^>]*>/g, '').slice(0, 200) : 'Приглашение';
+    const cleanGirlName = girlName ? String(girlName).replace(/<[^>]*>/g, '').slice(0, 100) : null;
 
     const id = generateId();
     const senderToken = generateId() + generateId();
@@ -34,6 +35,7 @@ router.post('/', authMiddleware, publishLimiter, async (req, res) => {
       id,
       userId: req.userId,
       title: cleanTitle,
+      girlName: cleanGirlName,
       html,
       senderToken,
     });

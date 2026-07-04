@@ -63,7 +63,7 @@ const ExportModule = {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ html, title: AppState.pageTitle })
+        body: JSON.stringify({ html, title: AppState.pageTitle, girlName: AppState.girlName })
       });
 
       if (!response.ok) {

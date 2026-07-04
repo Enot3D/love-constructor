@@ -414,6 +414,21 @@ const Preview = {
   }
   .yes-screen.show { display: flex; }
   .yes-screen h1 { color: ${s.colorPrimary}; font-size: 2.5em; margin-bottom: 16px; }
+  .yes-reminder {
+    background: rgba(255,255,255,0.2);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    padding: 20px 28px;
+    margin-top: 12px;
+    text-align: left;
+    border: 1px solid rgba(255,255,255,0.3);
+    max-width: 360px;
+    width: 100%;
+  }
+  .yes-reminder-label { font-size: 0.8em; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .yes-reminder-date { font-size: 1.3em; font-weight: 600; margin-bottom: 6px; }
+  .yes-reminder-place { font-size: 1.1em; margin-bottom: 4px; }
+  .yes-reminder-for { font-size: 0.95em; opacity: 0.8; margin-top: 8px; }
 
   .message-popup {
     position: fixed;
@@ -487,6 +502,12 @@ ${musicHTML}
 
 <div class="yes-screen" id="yesScreen">
   <h1>${escHTML(s.yesText)}</h1>
+  <div class="yes-reminder">
+    <p class="yes-reminder-label">Не забудь:</p>
+    <p class="yes-reminder-date">📅 ${escHTML(s.mainDate)}</p>
+    <p class="yes-reminder-place">📍 ${escHTML(s.mainPlace)}</p>
+    ${s.girlName ? `<p class="yes-reminder-for">Для: <strong>${escHTML(s.girlName)}</strong></p>` : ''}
+  </div>
   <div id="yesExtra"></div>
 </div>
 

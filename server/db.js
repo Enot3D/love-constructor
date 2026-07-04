@@ -35,6 +35,7 @@ async function initDb() {
         id TEXT PRIMARY KEY,
         user_id INTEGER NOT NULL REFERENCES users(id),
         title TEXT,
+        girl_name TEXT,
         html TEXT NOT NULL,
         sender_token TEXT NOT NULL,
         created_at TEXT DEFAULT (now()::text),
