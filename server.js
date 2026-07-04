@@ -18,31 +18,16 @@ app.set('trust proxy', 1);
 // Gzip compression — speeds up all responses
 app.use(compression());
 
-// Health check first (no middleware overhead)
+// Health check
 app.get('/health', async (req, res) => {
   try {
     const { query } = require('./server/db');
     await query('SELECT 1');
-    res.json({ status: 'ok', uptime: process.uptime(), db: 'connected', version: 'v2' });
+    res.json({ status: 'ok', uptime: process.uptime() });
   } catch (e) {
-    res.json({ status: 'ok', uptime: process.uptime(), db: 'error', dbError: e.message, version: 'v2' });
+    res.json({ status: 'ok', uptime: process.uptime(), db: 'error' });
   }
 });
-
-// Debug endpoint
-app.get('/debug', async (req, res) => {
-  try {
-    const { query } = require('./server/db');
-    const r = await query('SELECT current_database(), version()');
-    // Test user creation
-    const testResult = await query("INSERT INTO users (email, password_hash, display_name) VALUES ($1, $2, $3) RETURNING id, email", ['debug_' + Date.now() + '@test.com', 'fakehash', 'Debug']);
-    res.json({ db: r.rows[0], testUser: testResult.rows[0] });
-  } catch (e) {
-    res.json({ error: e.message, stack: e.stack });
-  }
-});
-
-// Static files BEFORE heavy middleware — serves index.html for /, plus JS/CSS/images
 app.use(express.static(path.join(__dirname, 'public'), {
   index: 'index.html',
   maxAge: '1d',
@@ -97,8 +82,7 @@ app.use('/api', (req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
-  res.setHeader('Cache-Control', 'no-store');
-  res.status(500).json({ error: err.message || 'Ошибка сервера' });
+  res.status(500).json({ error: 'Ошибка сервера' });
 });
 
 // Start server
