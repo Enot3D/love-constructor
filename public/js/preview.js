@@ -193,9 +193,8 @@ const Preview = {
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>${escHTML(s.pageTitle)}</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="${fontsLink}" rel="stylesheet">
+<link href="${fontsLink}" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="${fontsLink}" rel="stylesheet"></noscript>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: ${s.fxSmoothScroll === 'on' ? 'smooth' : 'auto'}; }

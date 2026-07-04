@@ -23,6 +23,9 @@ const FontsModule = {
         const link = document.createElement('link');
         link.href = `https://fonts.googleapis.com/css2?family=${name.replace(/ /g, '+')}&display=swap`;
         link.rel = 'stylesheet';
+        link.media = 'print';
+        link.onload = function() { this.media = 'all'; };
+        link.onerror = function() { this.remove(); };
         document.head.appendChild(link);
       });
     }
