@@ -59,6 +59,9 @@ async function initDb() {
     await client.query(`CREATE INDEX IF NOT EXISTS idx_user_email ON users(email)`);
     await client.query(`CREATE INDEX IF NOT EXISTS idx_user_vk ON users(vk_id)`);
 
+    // Migration: add girl_name column if missing
+    await client.query(`ALTER TABLE invitations ADD COLUMN IF NOT EXISTS girl_name TEXT`);
+
     console.log('Database tables initialized');
   } finally {
     client.release();
