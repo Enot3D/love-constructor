@@ -18,8 +18,14 @@ app.set('trust proxy', 1);
 app.use(compression());
 
 // Health check first (no middleware overhead)
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
+app.get('/health', async (req, res) => {
+  try {
+    const { query } = require('./server/db');
+    await query('SELECT 1');
+    res.json({ status: 'ok', uptime: process.uptime(), db: 'connected' });
+  } catch (e) {
+    res.json({ status: 'ok', uptime: process.uptime(), db: 'error', dbError: e.message });
+  }
 });
 
 // Static files BEFORE heavy middleware — serves index.html for /, plus JS/CSS/images
