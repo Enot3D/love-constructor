@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Ответы на приглашение</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/ads.css">
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
@@ -172,6 +173,8 @@
     </div>
 
     <button class="refresh-btn" id="refreshBtn">Обновить</button>
+
+    <div id="ad-slot-track" class="ad-banner"></div>
   </div>
 
   <script>
@@ -181,8 +184,6 @@
       const token = params.get('token');
       const listEl = document.getElementById('responsesList');
       const headerSub = document.getElementById('headerSub');
-
-      const FIREBASE_URL = 'https://love-constructor-default-rtdb.firebaseio.com';
 
       if (!id || !token) {
         listEl.innerHTML = '<div class="error">Неверная ссылка. Проверьте URL.</div>';
@@ -194,24 +195,18 @@
         listEl.innerHTML = '<div class="loader">Загрузка ответов...</div>';
 
         try {
-          /* Проверяем токен */
-          const invResp = await fetch(FIREBASE_URL + '/invitations/' + id + '.json');
-          if (!invResp.ok) throw new Error('Ошибка сети');
-          const invData = await invResp.json();
-
-          if (!invData || invData.senderToken !== token) {
-            listEl.innerHTML = '<div class="error">Доступ запрещён. Неверный токен.</div>';
-            headerSub.textContent = 'Доступ запрещён';
-            return;
+          const resp = await fetch('/api/invitations/' + id + '/responses?token=' + encodeURIComponent(token));
+          if (!resp.ok) {
+            const err = await resp.json();
+            throw new Error(err.error || 'Ошибка');
           }
+          const data = await resp.json();
 
-          headerSub.textContent = invData.title || 'Приглашение';
+          headerSub.textContent = data.title || 'Приглашение';
 
-          /* Загружаем ответы */
-          const respResp = await fetch(FIREBASE_URL + '/responses/' + id + '.json');
-          const respData = await respResp.json();
+          const responses = data.responses || [];
 
-          if (!respData) {
+          if (!responses.length) {
             listEl.innerHTML = `
               <div class="empty">
                 <div class="emoji">📭</div>
@@ -223,34 +218,30 @@
             return;
           }
 
-          const responses = Object.values(respData);
-
-          /* Статистика */
-          const total = responses.length;
-          const yesCount = responses.filter(r => r.clickedYes).length;
-          const dateCount = responses.filter(r => r.selectedDate).length;
+          const total = data.stats?.total || responses.length;
+          const yesCount = data.stats?.yes_count || responses.filter(r => r.clicked_yes).length;
+          const dateCount = data.stats?.date_count || responses.filter(r => r.selected_date).length;
 
           document.getElementById('statTotal').textContent = total;
           document.getElementById('statYes').textContent = yesCount;
           document.getElementById('statDates').textContent = dateCount;
           document.getElementById('stats').style.display = 'grid';
 
-          /* Список ответов */
           const monthNames = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
           const dayNames = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
 
           listEl.innerHTML = responses.map(r => {
             let dateStr = 'Не выбрана';
-            if (r.selectedDate) {
-              const d = new Date(r.selectedDate + 'T00:00:00');
+            if (r.selected_date) {
+              const d = new Date(r.selected_date + 'T00:00:00');
               dateStr = d.getDate() + ' ' + monthNames[d.getMonth()] + ', ' + dayNames[d.getDay()];
             }
-            const time = r.timestamp ? new Date(r.timestamp).toLocaleString('ru-RU') : '';
-            const yesBadge = r.clickedYes ? '<div class="status">✅ Нажала «Да»</div>' : '<div class="status" style="color:#ff9800;">⏳ Ожидает ответа</div>';
+            const time = r.created_at ? new Date(r.created_at).toLocaleString('ru-RU') : '';
+            const yesBadge = r.clicked_yes ? '<div class="status">✅ Нажала «Да»</div>' : '<div class="status" style="color:#ff9800;">⏳ Ожидает ответа</div>';
 
             return `
               <div class="response-item">
-                <div class="icon">${r.clickedYes ? '❤️' : r.selectedDate ? '📅' : '💬'}</div>
+                <div class="icon">${r.clicked_yes ? '❤️' : r.selected_date ? '📅' : '💬'}</div>
                 <div class="info">
                   <div class="date">${dateStr}</div>
                   ${yesBadge}
@@ -269,5 +260,6 @@
       document.getElementById('refreshBtn').addEventListener('click', load);
     })();
   </script>
+  <script src="/js/ad.js"></script>
 </body>
 </html>

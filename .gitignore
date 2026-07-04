@@ -1,6 +1,12 @@
 # Dependencies
 node_modules/
 
+# Environment
+.env
+
+# Database
+data/
+
 # OS files
 .DS_Store
 Thumbs.db

@@ -531,7 +531,7 @@ ${yesHeartsCanvas}
     dpDates: s.dpDates,
     dpThankYou: s.dpThankYou,
     publishedId: '__INVITE_ID__',
-    firebaseUrl: 'https://love-constructor-default-rtdb.firebaseio.com',
+    siteUrl: window.location.origin,
   })};
 
   /* ---- Общий ID ответа для этой сессии ---- */
@@ -541,14 +541,11 @@ ${yesHeartsCanvas}
 
   async function sendResponse(updates) {
     if (!s.publishedId) return;
-    const payload = Object.assign({
-      timestamp: new Date().toISOString()
-    }, updates);
     try {
-      await fetch(s.firebaseUrl + '/responses/' + s.publishedId + '/' + responseId + '.json', {
-        method: 'PATCH',
+      await fetch(s.siteUrl + '/api/respond/' + s.publishedId, {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(Object.assign({ responseId: responseId }, updates))
       });
     } catch (e) { /* тихо */ }
   }

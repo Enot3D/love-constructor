@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Мои приглашения — Love Constructor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/ads.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #f8f9fc; color: #1d1d1f; min-height: 100vh;
+    }
+
+    /* Topbar */
+    .topbar {
+      height: 56px; display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; background: rgba(255,255,255,0.85); backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0,0,0,0.06); position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-left { display: flex; align-items: center; gap: 10px; }
+    .topbar-left span { font-size: 22px; color: #e91e63; }
+    .topbar-left h1 { font-size: 16px; font-weight: 600; }
+    .topbar-right { display: flex; align-items: center; gap: 12px; }
+    .user-info { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; }
+    .user-avatar { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; }
+    .user-avatar img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+    .btn {
+      padding: 8px 16px; border: none; border-radius: 10px; font: inherit;
+      font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
+    }
+    .btn-outline { background: transparent; border: 1px solid rgba(0,0,0,0.12); color: #333; }
+    .btn-outline:hover { background: rgba(0,0,0,0.04); }
+    .btn-primary { background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff; }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(233,30,99,0.3); }
+    .btn-danger { background: rgba(244,67,54,0.08); color: #c62828; }
+    .btn-danger:hover { background: rgba(244,67,54,0.15); }
+
+    /* Main content */
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+    .header h2 { font-size: 24px; font-weight: 700; }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 32px; }
+    .stat-card {
+      background: rgba(255,255,255,0.8); border-radius: 16px; padding: 20px;
+      border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .stat-card .num { font-size: 28px; font-weight: 700; color: #e91e63; }
+    .stat-card .label { font-size: 11px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+
+    /* Invitation cards */
+    .invitations { display: flex; flex-direction: column; gap: 12px; }
+    .inv-card {
+      background: rgba(255,255,255,0.8); border-radius: 16px; padding: 20px;
+      border: 1px solid rgba(255,255,255,0.5); box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      display: flex; align-items: center; gap: 16px; transition: all 0.2s;
+    }
+    .inv-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+    .inv-icon { width: 48px; height: 48px; border-radius: 14px; background: linear-gradient(135deg, #fce4ec, #f3e5f5); display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .inv-info { flex: 1; min-width: 0; }
+    .inv-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .inv-date { font-size: 12px; color: #999; }
+    .inv-stats { display: flex; gap: 16px; margin-top: 8px; }
+    .inv-stat { font-size: 12px; color: #6e6e73; }
+    .inv-stat strong { color: #e91e63; }
+    .inv-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .inv-actions .btn { padding: 6px 12px; font-size: 12px; }
+
+    .empty { text-align: center; padding: 60px 20px; color: #999; }
+    .empty .emoji { font-size: 48px; margin-bottom: 12px; }
+    .empty p { font-size: 14px; margin-top: 8px; }
+
+    .loader { text-align: center; padding: 60px; color: #e91e63; }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px);
+      z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: #fff; border-radius: 20px; padding: 28px; max-width: 600px; width: 100%;
+      max-height: 80vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    }
+    .modal h3 { font-size: 18px; margin-bottom: 16px; }
+    .response-item {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      background: rgba(255,255,255,0.6); border-radius: 12px; margin-bottom: 8px;
+      border: 1px solid rgba(0,0,0,0.04);
+    }
+    .response-item .icon { font-size: 24px; flex-shrink: 0; }
+    .response-item .info { flex: 1; }
+    .response-item .date { font-size: 14px; font-weight: 600; color: #e91e63; }
+    .response-item .status { font-size: 12px; color: #4caf50; font-weight: 500; }
+    .response-item .time { font-size: 11px; color: #999; margin-top: 2px; }
+    .response-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .response-actions .btn { padding: 4px 8px; font-size: 11px; border-radius: 6px; }
+
+    /* Edit response modal */
+    .edit-field { margin-bottom: 12px; }
+    .edit-field label { display: block; font-size: 12px; font-weight: 500; color: #6e6e73; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .edit-field input, .edit-field select, .edit-field textarea {
+      width: 100%; padding: 8px 12px; border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 8px; font: inherit; font-size: 13px; outline: none;
+      background: rgba(255,255,255,0.6); transition: border-color 0.2s;
+    }
+    .edit-field input:focus, .edit-field select:focus, .edit-field textarea:focus {
+      border-color: #e91e63; box-shadow: 0 0 0 3px rgba(233,30,99,0.1);
+    }
+    .edit-field textarea { resize: vertical; min-height: 60px; }
+    .edit-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
+
+    .link-row { display: flex; gap: 6px; margin: 8px 0; }
+    .link-row input { flex: 1; padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 8px; font-size: 12px; font-family: monospace; background: #f5f5f5; outline: none; }
+    .link-row .btn { white-space: nowrap; }
+
+    /* Ad placeholder */
+    .ad-banner {
+      margin: 32px 0; padding: 16px; background: rgba(0,0,0,0.02);
+      border: 1px dashed rgba(0,0,0,0.08); border-radius: 12px; text-align: center;
+      font-size: 11px; color: #bbb; min-height: 90px; display: flex;
+      align-items: center; justify-content: center;
+    }
+
+    @media (max-width: 600px) {
+      .topbar { padding: 0 12px; }
+      .topbar-left h1 { font-size: 14px; }
+      .user-info span { display: none; }
+      .container { padding: 20px 12px; }
+      .header { flex-direction: column; gap: 12px; align-items: flex-start; }
+      .inv-card { flex-direction: column; align-items: flex-start; }
+      .inv-actions { width: 100%; }
+      .inv-actions .btn { flex: 1; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <span>&#10084;</span>
+      <h1>Love Constructor</h1>
+    </div>
+    <div class="topbar-right">
+      <div class="user-info">
+        <div class="user-avatar" id="userAvatar">?</div>
+        <span id="userName">Загрузка...</span>
+      </div>
+      <a href="/" class="btn btn-primary">+ Создать</a>
+      <button class="btn btn-outline" id="logoutBtn">Выйти</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="header">
+      <h2>Мои приглашения</h2>
+    </div>
+
+    <div class="stats" id="stats" style="display:none;">
+      <div class="stat-card"><div class="num" id="statTotal">0</div><div class="label">Приглашений</div></div>
+      <div class="stat-card"><div class="num" id="statYes">0</div><div class="label">Нажали «Да»</div></div>
+      <div class="stat-card"><div class="num" id="statDates">0</div><div class="label">Выбрали дату</div></div>
+    </div>
+
+    <div id="invitationsList">
+      <div class="loader">Загрузка...</div>
+    </div>
+
+    <div id="ad-slot-dashboard" class="ad-banner"></div>
+  </div>
+
+  <!-- Responses Modal -->
+  <div class="modal-overlay" id="responsesModal">
+    <div class="modal">
+      <h3 id="modalTitle">Ответы</h3>
+      <div id="modalContent"></div>
+      <div style="margin-top:16px; display:flex; gap:8px; justify-content:flex-end;">
+        <button class="btn btn-outline" onclick="document.getElementById('responsesModal').classList.remove('show')">Закрыть</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+    let invitations = [];
+
+    // Check auth
+    async function checkAuth() {
+      try {
+        const resp = await fetch('/api/auth/me', { credentials: 'include' });
+        if (!resp.ok) { window.location.href = '/login'; return; }
+        currentUser = await resp.json();
+        document.getElementById('userName').textContent = currentUser.displayName;
+        const avatar = document.getElementById('userAvatar');
+        if (currentUser.avatarUrl) {
+          avatar.innerHTML = `<img src="${currentUser.avatarUrl}" alt="">`;
+        } else {
+          avatar.textContent = currentUser.displayName.charAt(0).toUpperCase();
+        }
+      } catch (e) {
+        window.location.href = '/login';
+      }
+    }
+
+    // Load invitations
+    async function loadInvitations() {
+      try {
+        const resp = await fetch('/api/invitations', { credentials: 'include' });
+        if (!resp.ok) throw new Error('Ошибка загрузки');
+        invitations = await resp.json();
+        render();
+      } catch (e) {
+        document.getElementById('invitationsList').innerHTML = `<div class="empty"><div class="emoji">⚠️</div><p>${e.message}</p></div>`;
+      }
+    }
+
+    function render() {
+      const list = document.getElementById('invitationsList');
+
+      if (!invitations.length) {
+        list.innerHTML = `
+          <div class="empty">
+            <div class="emoji">💌</div>
+            <p>У вас пока нет приглашений</p>
+            <a href="/" class="btn btn-primary" style="margin-top:16px; display:inline-block; text-decoration:none;">Создать первое приглашение</a>
+          </div>`;
+        document.getElementById('stats').style.display = 'none';
+        return;
+      }
+
+      // Stats
+      let totalYes = 0, totalDates = 0;
+      invitations.forEach(inv => {
+        totalYes += (inv.stats?.yes_count || 0);
+        totalDates += (inv.stats?.date_count || 0);
+      });
+      document.getElementById('statTotal').textContent = invitations.length;
+      document.getElementById('statYes').textContent = totalYes;
+      document.getElementById('statDates').textContent = totalDates;
+      document.getElementById('stats').style.display = 'grid';
+
+      // Cards
+      const monthNames = ['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+      list.innerHTML = invitations.map(inv => {
+        const d = new Date(inv.created_at);
+        const dateStr = d.getDate() + ' ' + monthNames[d.getMonth()] + ' ' + d.getFullYear();
+        const total = inv.stats?.total || 0;
+        const yes = inv.stats?.yes_count || 0;
+        const dates = inv.stats?.date_count || 0;
+
+        return `
+          <div class="inv-card" data-id="${inv.id}">
+            <div class="inv-icon">💌</div>
+            <div class="inv-info">
+              <div class="inv-title">${esc(inv.title || 'Без названия')}</div>
+              <div class="inv-date">${dateStr}</div>
+              <div class="inv-stats">
+                <span class="inv-stat">Ответов: <strong>${total}</strong></span>
+                <span class="inv-stat">«Да»: <strong>${yes}</strong></span>
+                <span class="inv-stat">Дат: <strong>${dates}</strong></span>
+              </div>
+            </div>
+            <div class="inv-actions">
+              <button class="btn btn-outline" onclick="viewResponses('${inv.id}')">Ответы</button>
+              <button class="btn btn-outline" onclick="copyLink('${inv.id}')">Ссылка</button>
+              <button class="btn btn-danger" onclick="deleteInv('${inv.id}')">✕</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    let currentInviteId = null;
+
+    async function viewResponses(id) {
+      const modal = document.getElementById('responsesModal');
+      const content = document.getElementById('modalContent');
+      const title = document.getElementById('modalTitle');
+      content.innerHTML = '<div class="loader">Загрузка...</div>';
+      modal.classList.add('show');
+      currentInviteId = id;
+
+      try {
+        const inv = invitations.find(i => i.id === id);
+        title.textContent = 'Ответы — ' + (inv?.title || 'Приглашение');
+
+        const resp = await fetch(`/api/invitations/${id}`, { credentials: 'include' });
+        const data = await resp.json();
+
+        if (!data.responses || !data.responses.length) {
+          content.innerHTML = '<div class="empty"><div class="emoji">📭</div><p>Пока нет ответов</p></div>';
+          return;
+        }
+
+        renderResponses(data.responses);
+      } catch (e) {
+        content.innerHTML = `<div class="empty"><p>Ошибка: ${e.message}</p></div>`;
+      }
+    }
+
+    function renderResponses(responses) {
+      const content = document.getElementById('modalContent');
+      const monthNames = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+      const dayNames = ['Вс','Пн','Вт','Ср','Чт','Пт','Сб'];
+
+      content.innerHTML = responses.map(r => {
+        let dateStr = 'Не выбрана';
+        if (r.selected_date) {
+          const dt = new Date(r.selected_date + 'T00:00:00');
+          dateStr = dt.getDate() + ' ' + monthNames[dt.getMonth()] + ', ' + dayNames[dt.getDay()];
+        }
+        const time = r.created_at ? new Date(r.created_at).toLocaleString('ru-RU') : '';
+        const status = r.clicked_yes ? '✅ Нажала «Да»' : '⏳ Ожидает';
+        const icon = r.clicked_yes ? '❤️' : r.selected_date ? '📅' : '💬';
+
+        return `
+          <div class="response-item" data-response-id="${esc(r.id)}">
+            <div class="icon">${icon}</div>
+            <div class="info">
+              <div class="date">${dateStr}</div>
+              <div class="status">${status}</div>
+              <div class="time">${time}</div>
+            </div>
+            <div class="response-actions">
+              <button class="btn btn-outline" onclick="editResponse('${esc(r.id)}', ${r.clicked_yes ? 'true' : 'false'}, '${esc(r.selected_date || '')}', '${esc((r.feedback_text || '').replace(/'/g, "\\'"))}')">Изм.</button>
+              <button class="btn btn-danger" onclick="deleteResponse('${esc(r.id)}')">✕</button>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    async function deleteResponse(responseId) {
+      if (!confirm('Удалить ответ?')) return;
+      try {
+        const resp = await fetch(`/api/invitations/${currentInviteId}/responses/${responseId}`, {
+          method: 'DELETE',
+          credentials: 'include',
+        });
+        if (!resp.ok) throw new Error('Ошибка');
+        showToast('Ответ удалён');
+        // Reload responses
+        const data = await fetch(`/api/invitations/${currentInviteId}`, { credentials: 'include' }).then(r => r.json());
+        renderResponses(data.responses || []);
+        // Update stats in invitation list
+        const inv = invitations.find(i => i.id === currentInviteId);
+        if (inv) {
+          inv.stats = data.stats;
+          render();
+        }
+      } catch (e) {
+        showToast('Ошибка удаления');
+      }
+    }
+
+    function editResponse(responseId, clickedYes, selectedDate, feedbackText) {
+      const modal = document.getElementById('responsesModal');
+      const content = document.getElementById('modalContent');
+
+      content.innerHTML = `
+        <div class="edit-field">
+          <label>Ответ</label>
+          <select id="editClickedYes">
+            <option value="true" ${clickedYes ? 'selected' : ''}>Да</option>
+            <option value="false" ${!clickedYes ? 'selected' : ''}>Нет / Ожидает</option>
+          </select>
+        </div>
+        <div class="edit-field">
+          <label>Дата</label>
+          <input type="date" id="editSelectedDate" value="${esc(selectedDate)}">
+        </div>
+        <div class="edit-field">
+          <label>Комментарий</label>
+          <textarea id="editFeedbackText" placeholder="Текст ответа...">${esc(feedbackText)}</textarea>
+        </div>
+        <div class="edit-actions">
+          <button class="btn btn-outline" onclick="viewResponses('${currentInviteId}')">Отмена</button>
+          <button class="btn btn-primary" onclick="saveResponse('${esc(responseId)}')">Сохранить</button>
+        </div>`;
+    }
+
+    async function saveResponse(responseId) {
+      const clickedYes = document.getElementById('editClickedYes').value === 'true';
+      const selectedDate = document.getElementById('editSelectedDate').value || null;
+      const feedbackText = document.getElementById('editFeedbackText').value || null;
+
+      try {
+        const resp = await fetch(`/api/invitations/${currentInviteId}/responses/${responseId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ clickedYes, selectedDate, feedbackText }),
+        });
+        if (!resp.ok) throw new Error('Ошибка');
+        showToast('Ответ обновлён');
+        // Reload responses
+        const data = await fetch(`/api/invitations/${currentInviteId}`, { credentials: 'include' }).then(r => r.json());
+        renderResponses(data.responses || []);
+        const inv = invitations.find(i => i.id === currentInviteId);
+        if (inv) {
+          inv.stats = data.stats;
+          render();
+        }
+      } catch (e) {
+        showToast('Ошибка сохранения');
+      }
+    }
+
+    async function copyLink(id) {
+      const url = `${window.location.origin}/view.html?id=${id}`;
+      try {
+        await navigator.clipboard.writeText(url);
+        showToast('Ссылка скопирована!');
+      } catch (e) {
+        prompt('Скопируйте ссылку:', url);
+      }
+    }
+
+    async function deleteInv(id) {
+      if (!confirm('Удалить приглашение?')) return;
+      try {
+        await fetch(`/api/invitations/${id}`, { method: 'DELETE', credentials: 'include' });
+        invitations = invitations.filter(i => i.id !== id);
+        render();
+        showToast('Удалено');
+      } catch (e) {
+        showToast('Ошибка удаления');
+      }
+    }
+
+    function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function showToast(msg) {
+      let t = document.querySelector('.toast');
+      if (!t) { t = document.createElement('div'); t.className = 'toast'; t.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 24px;background:#333;color:#fff;border-radius:8px;font-size:13px;z-index:9999;opacity:0;transition:opacity 0.3s;pointer-events:none;'; document.body.appendChild(t); }
+      t.textContent = msg; t.style.opacity = '1';
+      setTimeout(() => t.style.opacity = '0', 2000);
+    }
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+      window.location.href = '/login';
+    });
+
+    // Close modal on overlay click
+    document.getElementById('responsesModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) e.currentTarget.classList.remove('show');
+    });
+
+    // Init
+    checkAuth().then(loadInvitations);
+  </script>
+  <script src="/js/ad.js"></script>
+</body>
+</html>

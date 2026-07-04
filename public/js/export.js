@@ -46,19 +46,18 @@ const ExportModule = {
 
   /* ============================================================
      ПУБЛИКАЦИЯ ПРИГЛАШЕНИЯ
-     Сохраняет готовый HTML в Firebase и возвращает ссылку.
+     Сохраняет готовый HTML через API и возвращает ссылку.
      ============================================================ */
   async publish() {
-    /* Проверяем, настроен ли Firebase */
-    if (this.FIREBASE_URL.includes('ВАШ-ПРОЕКТ')) {
-      alert(
-        'Для публикации нужно настроить Firebase.\n\n' +
-        '1. Создайте проект на console.firebase.google.com\n' +
-        '2. Включите Realtime Database\n' +
-        '3. Укажите URL в js/export.js (строка FIREBASE_URL)\n' +
-        '4. Установите правила доступа на чтение/запись\n\n' +
-        'Подробная инструкция в файле SETUP.md'
-      );
+    /* Проверяем авторизацию */
+    try {
+      const authResp = await fetch('/api/auth/me', { credentials: 'include' });
+      if (!authResp.ok) {
+        window.location.href = '/login';
+        return null;
+      }
+    } catch (e) {
+      window.location.href = '/login';
       return null;
     }
 
@@ -66,40 +65,26 @@ const ExportModule = {
       /* Генерируем HTML приглашения */
       const html = Preview.generateHTML(true);
 
-      /* Создаём уникаль ID и секретный токен отправителя */
-      const id = this._generateId();
-      const senderToken = this._generateId() + this._generateId();
+      /* Отправляем на сервер */
+      const response = await fetch('/api/invitations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ html, title: AppState.pageTitle })
+      });
 
-      /* Данные для сохранения */
-      const payload = {
-        html: html,
-        title: AppState.pageTitle,
-        senderToken: senderToken,
-        createdAt: new Date().toISOString()
-      };
+      if (!response.ok) {
+        const err = await response.json();
+        throw new Error(err.error || 'Ошибка сервера');
+      }
 
-      /* Отправляем в Firebase */
-      const response = await fetch(
-        this.FIREBASE_URL + '/invitations/' + id + '.json',
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        }
-      );
-
-      if (!response.ok) throw new Error('Ошибка сервера: ' + response.status);
+      const result = await response.json();
 
       /* Сохраняем ID приглашения */
-      setState('publishedId', id);
-      ResponsesModule.setInviteId(id);
+      setState('publishedId', result.id);
+      ResponsesModule.setInviteId(result.id);
 
-      /* Формируем ссылки */
-      const baseUrl = window.location.origin + window.location.pathname.replace(/index\.html$/, '');
-      const inviteLink = baseUrl + 'view.html?id=' + id;
-      const trackerLink = baseUrl + 'track.html?id=' + id + '&token=' + senderToken;
-
-      return { inviteLink, trackerLink };
+      return { inviteLink: result.inviteLink, trackerLink: result.trackerLink };
 
     } catch (e) {
       console.error('Ошибка публикации:', e);

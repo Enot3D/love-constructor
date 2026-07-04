@@ -1,0 +1,35 @@
+/* Ad banner styles */
+.ad-banner {
+  margin: 32px 0 16px;
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px dashed rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  text-align: center;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* When ad script loads, remove border/background */
+.ad-banner.has-ad {
+  background: transparent;
+  border: none;
+  padding: 8px 0;
+}
+
+/* Fallback placeholder */
+.ad-banner .ad-fallback {
+  font-size: 11px;
+  color: #bbb;
+  letter-spacing: 0.5px;
+}
+
+/* Responsive ad sizing */
+@media (min-width: 768px) {
+  .ad-banner {
+    min-height: 90px;
+  }
+}

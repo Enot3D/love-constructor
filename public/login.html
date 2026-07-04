@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход — Love Constructor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/ads.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #fce4ec 0%, #f3e5f5 50%, #e8eaf6 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .card {
+      background: rgba(255,255,255,0.85);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px 32px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.08);
+    }
+    .logo { text-align: center; margin-bottom: 28px; }
+    .logo span { font-size: 36px; }
+    .logo h1 { font-size: 20px; font-weight: 700; color: #1d1d1f; margin-top: 8px; }
+    .logo p { font-size: 13px; color: #6e6e73; margin-top: 4px; }
+
+    .tabs { display: flex; gap: 0; margin-bottom: 24px; border-radius: 12px; overflow: hidden; border: 1px solid rgba(0,0,0,0.08); }
+    .tab {
+      flex: 1; padding: 10px; border: none; background: transparent;
+      font: inherit; font-size: 14px; font-weight: 500; cursor: pointer;
+      color: #6e6e73; transition: all 0.2s;
+    }
+    .tab.active { background: #e91e63; color: #fff; }
+
+    .form { display: none; }
+    .form.active { display: block; }
+
+    .field { margin-bottom: 14px; }
+    .field label { display: block; font-size: 12px; font-weight: 500; color: #6e6e73; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .field input {
+      width: 100%; padding: 10px 14px; border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 10px; font: inherit; font-size: 14px; outline: none;
+      background: rgba(255,255,255,0.6); transition: border-color 0.2s;
+    }
+    .field input:focus { border-color: #e91e63; box-shadow: 0 0 0 3px rgba(233,30,99,0.1); }
+
+    .btn-primary {
+      width: 100%; padding: 12px; border: none; border-radius: 12px;
+      background: linear-gradient(135deg, #e91e63, #9c27b0); color: #fff;
+      font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s; margin-top: 8px;
+    }
+    .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(233,30,99,0.3); }
+    .btn-primary:active { transform: scale(0.98); }
+
+    .divider {
+      display: flex; align-items: center; gap: 12px; margin: 20px 0;
+      font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,0.1); }
+
+    .btn-vk {
+      width: 100%; padding: 12px; border: none; border-radius: 12px;
+      background: #2787F5; color: #fff; font: inherit; font-size: 15px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-vk:hover { background: #1a6fd4; }
+    .btn-vk svg { width: 20px; height: 20px; }
+
+    .error-msg {
+      background: rgba(244,67,54,0.08); color: #c62828; padding: 10px 14px;
+      border-radius: 10px; font-size: 13px; margin-bottom: 14px; display: none;
+    }
+    .error-msg.show { display: block; }
+
+    .back-link {
+      display: block; text-align: center; margin-top: 16px;
+      font-size: 13px; color: #6e6e73; text-decoration: none;
+    }
+    .back-link:hover { color: #e91e63; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="logo">
+      <span>&#10084;</span>
+      <h1>Love Constructor</h1>
+      <p>Войдите, чтобы создавать приглашения</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Вход</button>
+      <button class="tab" data-tab="register">Регистрация</button>
+    </div>
+
+    <div class="error-msg" id="errorMsg"></div>
+
+    <!-- Login Form -->
+    <form class="form active" id="loginForm" data-form="login">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+      </div>
+      <div class="field">
+        <label>Пароль</label>
+        <input type="password" id="loginPassword" placeholder="Введите пароль" required>
+      </div>
+      <button type="submit" class="btn-primary">Войти</button>
+    </form>
+
+    <!-- Register Form -->
+    <form class="form" id="registerForm" data-form="register">
+      <div class="field">
+        <label>Имя</label>
+        <input type="text" id="regName" placeholder="Как вас зовут?" required>
+      </div>
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="regEmail" placeholder="your@email.com" required>
+      </div>
+      <div class="field">
+        <label>Пароль</label>
+        <input type="password" id="regPassword" placeholder="Минимум 6 символов" required minlength="6">
+      </div>
+      <button type="submit" class="btn-primary">Зарегистрироваться</button>
+    </form>
+
+    <div class="divider">или</div>
+
+    <button class="btn-vk" id="vkBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.785 16.241s.288-.032.436-.194c.136-.148.132-.427.132-.427s-.02-1.304.587-1.496c.598-.189 1.368 1.259 2.184 1.815.617.422 1.086.329 1.086.329l2.184-.03s1.142-.071.6-.967c-.045-.073-.32-.661-1.644-1.87-1.388-1.267-1.2-1.063.468-3.26.999-1.338 1.398-2.158 1.273-2.508-.119-.335-.852-.247-.852-.247l-2.458.015s-.183-.025-.318.056c-.132.079-.217.263-.217.263s-.389 1.036-.907 1.918c-1.092 1.86-1.529 1.962-1.706 1.848-.415-.267-.312-1.075-.312-1.65 0-1.793.272-2.54-.529-2.734-.266-.064-.462-.107-1.142-.114-.872-.008-1.61.003-2.027.207-.278.136-.492.44-.361.457.161.022.527.099.72.363.25.34.24 1.104.24 1.104s.145 2.11-.332 2.374c-.326.18-.775-.188-1.734-1.867-.491-.859-.862-1.81-.862-1.81s-.072-.176-.2-.27c-.155-.114-.372-.15-.372-.15l-2.33.015s-.349.01-.477.162c-.114.135-.01.414-.01.414s1.82 4.254 3.882 6.397c1.88 1.955 4.016 1.826 4.016 1.826h.972z"/></svg>
+      Войти через ВКонтакте
+    </button>
+
+    <a href="/" class="back-link">← Вернуться к конструктору</a>
+  </div>
+
+  <div id="ad-slot-login" class="ad-banner"></div>
+
+  <script>
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelector(`[data-form="${tab.dataset.tab}"]`).classList.add('active');
+        hideError();
+      });
+    });
+
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.classList.add('show');
+    }
+    function hideError() {
+      document.getElementById('errorMsg').classList.remove('show');
+    }
+
+    // Check URL for errors
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('error') === 'vk_denied') showError('Авторизация через ВК отменена');
+    if (params.get('error') === 'vk_failed') showError('Ошибка авторизации через ВК');
+    if (params.get('error') === 'server') showError('Ошибка сервера');
+
+    // Login
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+      const email = document.getElementById('loginEmail').value;
+      const password = document.getElementById('loginPassword').value;
+
+      try {
+        const resp = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+          credentials: 'include',
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error);
+        window.location.href = '/dashboard';
+      } catch (err) {
+        showError(err.message);
+      }
+    });
+
+    // Register
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      hideError();
+      const displayName = document.getElementById('regName').value;
+      const email = document.getElementById('regEmail').value;
+      const password = document.getElementById('regPassword').value;
+
+      try {
+        const resp = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, displayName }),
+          credentials: 'include',
+        });
+        const data = await resp.json();
+        if (!resp.ok) throw new Error(data.error);
+        window.location.href = '/dashboard';
+      } catch (err) {
+        showError(err.message);
+      }
+    });
+
+    // VK Login
+    document.getElementById('vkBtn').addEventListener('click', () => {
+      window.location.href = '/api/auth/vk';
+    });
+
+    // If already logged in, redirect to dashboard
+    fetch('/api/auth/me', { credentials: 'include' })
+      .then(r => r.ok ? window.location.href = '/dashboard' : null)
+      .catch(() => {});
+  </script>
+  <script src="/js/ad.js"></script>
+</body>
+</html>

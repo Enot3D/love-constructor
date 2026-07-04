@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Приглашение</title>
+  <link rel="stylesheet" href="/css/ads.css">
   <style>
     body {
       margin: 0;
@@ -32,10 +33,23 @@
     }
     iframe {
       width: 100%;
-      height: 100vh;
+      height: calc(100vh - 50px);
       border: none;
       position: fixed;
-      inset: 0;
+      top: 0; left: 0; right: 0;
+    }
+    .ad-footer {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 50px;
+      background: rgba(255,255,255,0.95);
+      border-top: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: #bbb;
+      z-index: 10;
     }
   </style>
 </head>
@@ -44,11 +58,6 @@
   <div class="error" id="error" style="display:none;"></div>
 
   <script>
-    /*
-     * Страница просмотра приглашения.
-     * Читает ID из URL (?id=XXXX), загружает данные из Firebase
-     * и отображает готовое приглашение в iframe.
-     */
     (async function() {
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
@@ -63,14 +72,7 @@
       }
 
       try {
-        /* ============================================================
-           FIREBASE CONFIG
-           Замените значения ниже на ваши из Firebase Console.
-           Инструкция: см. файл SETUP.md
-           ============================================================ */
-        const FIREBASE_URL = 'https://love-constructor-default-rtdb.firebaseio.com';
-
-        const response = await fetch(FIREBASE_URL + '/invitations/' + id + '.json');
+        const response = await fetch('/api/invitations/' + id + '/public');
         if (!response.ok) throw new Error('Ошибка сети');
         const data = await response.json();
 
@@ -81,24 +83,36 @@
           return;
         }
 
-        /* Вставляем ID приглашения и Firebase URL в HTML */
         let html = data.html;
-        html = html.replace(
-          '__INVITE_ID__',
-          id
-        );
+        html = html.replace('__INVITE_ID__', id);
 
-        /* Вставляем HTML приглашения в iframe */
         loader.style.display = 'none';
         const iframe = document.createElement('iframe');
         const blob = new Blob([html], { type: 'text/html' });
         iframe.src = URL.createObjectURL(blob);
         document.body.appendChild(iframe);
 
-        /* Обновляем заголовок страницы */
         if (data.title) document.title = data.title + ' — Приглашение';
 
       } catch (e) {
+        // Fallback: try Firebase directly (backward compatibility)
+        try {
+          const FIREBASE_URL = 'https://love-constructor-default-rtdb.firebaseio.com';
+          const fbResp = await fetch(FIREBASE_URL + '/invitations/' + id + '.json');
+          const fbData = await fbResp.json();
+
+          if (fbData && fbData.html) {
+            let html = fbData.html.replace('__INVITE_ID__', id);
+            loader.style.display = 'none';
+            const iframe = document.createElement('iframe');
+            const blob = new Blob([html], { type: 'text/html' });
+            iframe.src = URL.createObjectURL(blob);
+            document.body.appendChild(iframe);
+            if (fbData.title) document.title = fbData.title + ' — Приглашение';
+            return;
+          }
+        } catch (e2) { /* ignore */ }
+
         loader.style.display = 'none';
         errorEl.style.display = 'block';
         errorEl.textContent = 'Не удалось загрузить приглашение. Попробуйте позже.';
@@ -106,5 +120,9 @@
       }
     })();
   </script>
+  <div class="ad-footer" id="ad-slot-view">
+    <div class="ad-banner" style="margin:0;border:none;background:transparent;min-height:auto;"></div>
+  </div>
+  <script src="/js/ad.js"></script>
 </body>
 </html>

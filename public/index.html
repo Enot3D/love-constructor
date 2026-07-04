@@ -47,6 +47,14 @@
       </button>
     </div>
     <div class="topbar-right">
+      <a href="/dashboard" class="topbar-btn" id="btnDashboard" title="Мои приглашения" style="display:none;text-decoration:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+        <span>Мои</span>
+      </a>
+      <a href="/login" class="topbar-btn" id="btnLogin" title="Войти" style="text-decoration:none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+        <span>Войти</span>
+      </a>
       <button class="topbar-btn preview-btn" id="btnPreviewFull" title="Полный предпросмотр">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
         <span>Предпросмотр</span>
@@ -825,5 +833,19 @@
   <script src="js/preview.js"></script>
   <script src="js/export.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    // Auth check — show/hide login/dashboard buttons
+    (async function() {
+      try {
+        const resp = await fetch('/api/auth/me', { credentials: 'include' });
+        if (resp.ok) {
+          const user = await resp.json();
+          document.getElementById('btnLogin').style.display = 'none';
+          document.getElementById('btnDashboard').style.display = '';
+          window._currentUser = user;
+        }
+      } catch (e) { /* not logged in */ }
+    })();
+  </script>
 </body>
 </html>
