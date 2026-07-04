@@ -32,7 +32,8 @@ router.post('/register', authLimiter, async (req, res) => {
     res.json({ user: { id: user.id, email: user.email, displayName: user.display_name } });
   } catch (e) {
     console.error('Register error:', e);
-    res.status(500).json({ error: 'Ошибка сервера: ' + (e.message || e.toString()) });
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(500).json({ error: 'DB_ERROR: ' + (e.message || e.toString() || String(e)) });
   }
 });
 
@@ -63,7 +64,8 @@ router.post('/login', authLimiter, async (req, res) => {
     res.json({ user: { id: user.id, email: user.email, displayName: user.display_name } });
   } catch (e) {
     console.error('Login error:', e);
-    res.status(500).json({ error: 'Ошибка сервера' });
+    res.setHeader('Cache-Control', 'no-store');
+    res.status(500).json({ error: 'DB_ERROR: ' + (e.message || String(e)) });
   }
 });
 
