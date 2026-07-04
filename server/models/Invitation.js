@@ -42,12 +42,13 @@ const Invitation = {
     );
   },
 
-  async update(id, userId, { title, html }) {
+  async update(id, userId, { title, html, girlName }) {
     const sets = [];
     const params = [];
     let i = 1;
     if (title !== undefined) { sets.push(`title = $${i++}`); params.push(title); }
     if (html !== undefined) { sets.push(`html = $${i++}`); params.push(html); }
+    if (girlName !== undefined) { sets.push(`girl_name = $${i++}`); params.push(girlName); }
     if (!sets.length) return;
     params.push(id, userId);
     await query(`UPDATE invitations SET ${sets.join(', ')} WHERE id = $${i++} AND user_id = $${i++}`, params);

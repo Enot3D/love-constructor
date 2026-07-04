@@ -86,6 +86,26 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// Update invitation (auth required, must own)
+router.put('/:id', authMiddleware, async (req, res) => {
+  try {
+    const inv = await Invitation.findById(req.params.id);
+    if (!inv || inv.user_id !== req.userId) {
+      return res.status(404).json({ error: 'Приглашение не найдено' });
+    }
+
+    const { title, girlName } = req.body;
+    const cleanTitle = title !== undefined ? String(title).replace(/<[^>]*>/g, '').slice(0, 200) : undefined;
+    const cleanGirlName = girlName !== undefined ? String(girlName).replace(/<[^>]*>/g, '').slice(0, 100) : undefined;
+
+    await Invitation.update(req.params.id, req.userId, { title: cleanTitle, girlName: cleanGirlName });
+    res.json({ ok: true });
+  } catch (e) {
+    console.error('Update invitation error:', e);
+    res.status(500).json({ error: 'Ошибка сервера' });
+  }
+});
+
 // Delete invitation (soft delete, auth required)
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {

@@ -265,6 +265,7 @@
               </div>
             </div>
             <div class="inv-actions">
+              <button class="btn btn-outline" onclick="editInv('${inv.id}')">Изм.</button>
               <button class="btn btn-outline" onclick="viewResponses('${inv.id}')">Ответы</button>
               <button class="btn btn-outline" onclick="copyLink('${inv.id}')">Ссылка</button>
               <button class="btn btn-danger" onclick="deleteInv('${inv.id}')">✕</button>
@@ -415,6 +416,33 @@
         showToast('Ссылка скопирована!');
       } catch (e) {
         prompt('Скопируйте ссылку:', url);
+      }
+    }
+
+    async function editInv(id) {
+      const inv = invitations.find(i => i.id === id);
+      if (!inv) return;
+
+      const newName = prompt('Имя девушки:', inv.girl_name || '');
+      if (newName === null) return;
+
+      const newTitle = prompt('Название приглашения:', inv.title || '');
+      if (newTitle === null) return;
+
+      try {
+        const resp = await fetch(`/api/invitations/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ title: newTitle, girlName: newName }),
+        });
+        if (!resp.ok) throw new Error('Ошибка');
+        inv.title = newTitle;
+        inv.girl_name = newName;
+        render();
+        showToast('Обновлено');
+      } catch (e) {
+        showToast('Ошибка обновления');
       }
     }
 
