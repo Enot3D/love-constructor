@@ -127,8 +127,11 @@
 
     @media (max-width: 600px) {
       .topbar { padding: 0 12px; }
-      .topbar-left h1 { font-size: 14px; }
+      .topbar-left h1 { display: none; }
+      .topbar-left span { font-size: 24px; }
       .user-info span { display: none; }
+      .user-info { display: none; }
+      .btn-create-desktop { display: none; }
       .container { padding: 20px 12px; }
       .header { flex-direction: column; gap: 12px; align-items: flex-start; }
       .inv-card { flex-direction: column; align-items: flex-start; }
@@ -149,7 +152,7 @@
         <div class="user-avatar" id="userAvatar">?</div>
         <span id="userName">Загрузка...</span>
       </div>
-      <a href="/" class="btn btn-primary">+ Создать</a>
+      <a href="/" class="btn btn-primary btn-create-desktop">+ Создать</a>
       <button class="btn btn-outline" id="logoutBtn">Выйти</button>
     </div>
   </div>
