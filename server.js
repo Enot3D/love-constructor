@@ -1,6 +1,7 @@
 const express = require('express');
 const helmet = require('helmet');
 const cors = require('cors');
+const compression = require('compression');
 const cookieParser = require('cookie-parser');
 const path = require('path');
 const config = require('./server/config');
@@ -12,17 +13,31 @@ const app = express();
 // Trust proxy (for rate limiting behind reverse proxy)
 app.set('trust proxy', 1);
 
+// Gzip compression — speeds up all responses
+app.use(compression());
+
+// Health check first (no middleware overhead)
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', uptime: process.uptime() });
+});
+
+// Static files BEFORE heavy middleware — serves index.html for /, plus JS/CSS/images
+app.use(express.static(path.join(__dirname, 'public'), {
+  index: 'index.html',
+  maxAge: '1d',
+}));
+
 // Security headers
 app.use(helmet({
-  contentSecurityPolicy: false,  // We serve inline scripts
+  contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false,
   hsts: config.nodeEnv === 'production' ? { maxAge: 31536000, includeSubDomains: true } : false,
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 }));
 
-// CORS
+// CORS — allow any origin in production (Cloudflare handles origin validation)
 app.use(cors({
-  origin: config.siteUrl,
+  origin: config.nodeEnv === 'production' ? true : config.siteUrl,
   credentials: true,
 }));
 
@@ -37,23 +52,12 @@ app.use(cookieParser());
 // CSRF protection (after cookie parser)
 app.use(csrfMiddleware);
 
-// Static files
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime() });
-});
-
 // API routes
 app.use('/api/auth', require('./server/routes/auth'));
 app.use('/api/invitations', require('./server/routes/invitations'));
 app.use('/api/respond', require('./server/routes/responses'));
 
-// SPA fallback — serve index.html for non-API, non-file routes
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// SPA fallback for routes that aren't static files
 app.get('/dashboard', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'dashboard.html'));
 });
