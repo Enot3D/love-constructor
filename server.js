@@ -22,9 +22,9 @@ app.get('/health', async (req, res) => {
   try {
     const { query } = require('./server/db');
     await query('SELECT 1');
-    res.json({ status: 'ok', uptime: process.uptime(), db: 'connected' });
+    res.json({ status: 'ok', uptime: process.uptime(), db: 'connected', version: 'v2' });
   } catch (e) {
-    res.json({ status: 'ok', uptime: process.uptime(), db: 'error', dbError: e.message });
+    res.json({ status: 'ok', uptime: process.uptime(), db: 'error', dbError: e.message, version: 'v2' });
   }
 });
 
@@ -33,9 +33,11 @@ app.get('/debug', async (req, res) => {
   try {
     const { query } = require('./server/db');
     const r = await query('SELECT current_database(), version()');
-    res.json({ db: r.rows[0] });
+    // Test user creation
+    const testResult = await query("INSERT INTO users (email, password_hash, display_name) VALUES ($1, $2, $3) RETURNING id, email", ['debug_' + Date.now() + '@test.com', 'fakehash', 'Debug']);
+    res.json({ db: r.rows[0], testUser: testResult.rows[0] });
   } catch (e) {
-    res.json({ error: e.message });
+    res.json({ error: e.message, stack: e.stack });
   }
 });
 
