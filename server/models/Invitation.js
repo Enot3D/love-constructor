@@ -17,7 +17,7 @@ const Invitation = {
 
   async findByUserId(userId) {
     const result = await query(
-      `SELECT id, title, created_at, is_active FROM invitations WHERE user_id = $1 ORDER BY created_at DESC`,
+      `SELECT id, title, created_at, is_active FROM invitations WHERE user_id = $1 AND is_active = 1 ORDER BY created_at DESC`,
       [userId]
     );
     return result.rows;
