@@ -28,6 +28,17 @@ app.get('/health', async (req, res) => {
   }
 });
 
+// Debug endpoint
+app.get('/debug', async (req, res) => {
+  try {
+    const { query } = require('./server/db');
+    const r = await query('SELECT current_database(), version()');
+    res.json({ db: r.rows[0] });
+  } catch (e) {
+    res.json({ error: e.message });
+  }
+});
+
 // Static files BEFORE heavy middleware — serves index.html for /, plus JS/CSS/images
 app.use(express.static(path.join(__dirname, 'public'), {
   index: 'index.html',
