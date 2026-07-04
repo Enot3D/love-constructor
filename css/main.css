@@ -791,7 +791,8 @@ html, body {
    ============================================================ */
 @media (max-width: 900px) {
   .topbar-btn span { display: none; }
-  .topbar-btn { padding: 6px 8px; }
+  .topbar-btn { padding: 6px 8px; touch-action: manipulation; }
+  .publish-btn span { display: none; }
 
   .sidebar { width: 280px !important; min-width: 200px; }
   .sidebar-nav { width: 44px; min-width: 44px; }
@@ -804,13 +805,20 @@ html, body {
   .topbar { padding: 0 10px; gap: 6px; }
   .topbar-left { min-width: auto; gap: 6px; }
   .topbar-title { font-size: 12px; }
-  .topbar-center { gap: 2px; overflow-x: auto; flex-shrink: 1; min-width: 0; }
+  .topbar-center { gap: 2px; overflow-x: visible; flex-shrink: 1; min-width: 0; flex-wrap: wrap; justify-content: center; }
   .topbar-right { min-width: auto; }
 
-  .topbar-btn { padding: 6px; }
-  .topbar-btn svg { width: 14px; height: 14px; }
+  .topbar-btn { padding: 8px; min-width: 36px; min-height: 36px; touch-action: manipulation; }
+  .topbar-btn svg { width: 16px; height: 16px; }
 
-  .publish-btn span,
+  /* Скрываем второстепенные кнопки на мобильных */
+  #btnNewProject,
+  #btnLoad,
+  #btnExport,
+  #btnImport { display: none; }
+
+  .publish-btn { padding: 10px 14px; }
+  .publish-btn span { display: inline; font-size: 12px; }
   .preview-btn span { display: none; }
 
   .sidebar {
