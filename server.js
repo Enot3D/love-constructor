@@ -35,9 +35,9 @@ app.use(helmet({
   referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
 }));
 
-// CORS — allow any origin in production (Cloudflare handles origin validation)
+// CORS — allow all origins (Cloudflare handles this)
 app.use(cors({
-  origin: config.nodeEnv === 'production' ? true : config.siteUrl,
+  origin: true,
   credentials: true,
 }));
 
@@ -49,8 +49,11 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// CSRF protection (after cookie parser)
-app.use(csrfMiddleware);
+// CSRF protection — only for page forms, skip API routes
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api')) return next();
+  csrfMiddleware(req, res, next);
+});
 
 // API routes
 app.use('/api/auth', require('./server/routes/auth'));
