@@ -506,7 +506,6 @@ ${musicHTML}
     <p class="yes-reminder-label">Не забудь:</p>
     <p class="yes-reminder-date">📅 ${escHTML(s.mainDate)}</p>
     <p class="yes-reminder-place">📍 ${escHTML(s.mainPlace)}</p>
-    ${s.girlName ? `<p class="yes-reminder-for">Для: <strong>${escHTML(s.girlName)}</strong></p>` : ''}
   </div>
   <div id="yesExtra"></div>
 </div>
