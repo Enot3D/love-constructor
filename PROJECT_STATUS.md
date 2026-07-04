@@ -1,6 +1,6 @@
 # Love Constructor — Статус проекта
 
-## Последнее обновление: 4 июля 2025
+## Последнее обновление: 4 июля 2025 (обновлено — сайт запущен!)
 
 ## Что сделано
 
@@ -25,23 +25,20 @@
 
 ### Деплой
 - GitHub: `Enot3D/love-constructor`
-- Хостинг: Railway (`love-constructor-production.up.railway.app`)
+- Хостинг: Railway
 - Домен: `loveconstructor.ru` (kуплен в reg.ru)
 - Cloudflare: NS переключены, SSL Full Strict, CNAME → Railway
-- DNS: ожидаем пропагацию reg.ru
+- **Сайт работает: https://loveconstructor.ru**
 
 ## Следующие шаги
 
-1. **Проверить** `loveconstructor.ru` — открывается ли сайт
+1. ~~Проверить `loveconstructor.ru`~~ ✅ Работает!
 2. **Настроить VK OAuth** — в https://dev.vk.com:
    - Адрес сайта: `https://loveconstructor.ru`
    - Callback URL: `https://loveconstructor.ru/api/auth/vk/callback`
    - Прописать VK_APP_ID и VK_APP_SECRET в Railway variables
-3. **Обновить переменные Railway:**
-   - `SITE_URL=https://loveconstructor.ru`
-   - `VK_CALLBACK_URL=https://loveconstructor.ru/api/auth/vk/callback`
-4. **Протестировать:** регистрация → вход → создание приглашения → ответ → дашборд
-5. **Настроить рекламу:** зарегистрироваться в Яндекс.Рекламе или AdSense, раскомментировать в `public/js/ad.js`
+3. **Протестировать:** регистрация → вход → создание приглашения → ответ → дашборд
+4. **Настроить рекламу:** зарегистрироваться в Яндекс.Рекламе или AdSense, раскомментировать в `public/js/ad.js`
 
 ## Переменные окружения (Railway)
 
@@ -57,7 +54,7 @@
 
 ## Ссылки
 
-- Сайт (пока через Railway): https://love-constructor-production.up.railway.app
+- **Сайт: https://loveconstructor.ru**
 - GitHub: https://github.com/Enot3D/love-constructor
 - Railway: https://railway.app
 - Cloudflare: https://dash.cloudflare.com
