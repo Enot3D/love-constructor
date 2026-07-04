@@ -65,6 +65,7 @@ app.use((req, res, next) => {
 app.use('/api/auth', require('./server/routes/auth'));
 app.use('/api/invitations', require('./server/routes/invitations'));
 app.use('/api/respond', require('./server/routes/responses'));
+app.use('/api/admin', require('./server/routes/admin'));
 
 // SPA fallback for routes that aren't static files
 app.get('/dashboard', (req, res) => {
@@ -72,6 +73,9 @@ app.get('/dashboard', (req, res) => {
 });
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+app.get('/admin', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
 // 404 handler for API routes

@@ -160,6 +160,7 @@ router.get('/me', authMiddleware, async (req, res) => {
       displayName: user.display_name,
       avatarUrl: user.avatar_url,
       hasVk: !!user.vk_id,
+      isAdmin: user.role === 'admin',
     });
   } catch (e) {
     console.error('Get me error:', e);

@@ -59,13 +59,11 @@ const ExportModule = {
       const html = Preview.generateHTML(true);
 
       /* Отправляем на сервер */
-      const payload = { html, title: AppState.pageTitle, girlName: AppState.girlName || '' };
-      console.log('Publishing:', { title: payload.title, girlName: payload.girlName });
       const response = await fetch('/api/invitations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ html, title: AppState.pageTitle, girlName: AppState.girlName || '' })
       });
 
       if (!response.ok) {

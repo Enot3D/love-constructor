@@ -62,6 +62,12 @@ async function initDb() {
     // Migration: add girl_name column if missing
     await client.query(`ALTER TABLE invitations ADD COLUMN IF NOT EXISTS girl_name TEXT`);
 
+    // Migration: add role column if missing
+    await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS role TEXT DEFAULT 'user'`);
+
+    // Set egor.novoselisev@gmail.com as admin
+    await client.query(`UPDATE users SET role = 'admin' WHERE email = 'egor.novoselisev@gmail.com'`);
+
     console.log('Database tables initialized');
   } finally {
     client.release();
