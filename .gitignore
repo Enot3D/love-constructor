@@ -19,3 +19,6 @@ desktop.ini
 # Temp
 *.tmp
 *.log
+
+# Personal secrets (not for git)
+SECRETS.md
