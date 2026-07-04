@@ -1,6 +1,6 @@
 # Love Constructor — Статус проекта
 
-## Последнее обновление: 4 июля 2025 (обновлено — сайт запущен!)
+## Последнее обновление: 4 июля 2025 (сайт работает!)
 
 ## Что сделано
 
@@ -25,20 +25,23 @@
 
 ### Деплой
 - GitHub: `Enot3D/love-constructor`
-- Хостинг: Railway
+- Хостинг: Railway (Node.js + PostgreSQL)
 - Домен: `loveconstructor.ru` (kуплен в reg.ru)
-- Cloudflare: NS переключены, SSL Full Strict, CNAME → Railway
+- Cloudflare: DNS Only (серое облако) — прокси ломает JS, используется только DNS
 - **Сайт работает: https://loveconstructor.ru**
 
 ## Следующие шаги
 
-1. ~~Проверить `loveconstructor.ru`~~ ✅ Работает!
-2. **Настроить VK OAuth** — в https://dev.vk.com:
+1. ~~Сайт работает~~ ✅
+2. ~~Firebase удалён~~ ✅ 
+3. ~~PostgreSQL подключена~~ ✅
+4. ~~Шрифты локальные~~ ✅
+5. **Настроить VK OAuth** — в https://dev.vk.com:
    - Адрес сайта: `https://loveconstructor.ru`
    - Callback URL: `https://loveconstructor.ru/api/auth/vk/callback`
    - Прописать VK_APP_ID и VK_APP_SECRET в Railway variables
-3. **Протестировать:** регистрация → вход → создание приглашения → ответ → дашборд
-4. **Настроить рекламу:** зарегистрироваться в Яндекс.Рекламе или AdSense, раскомментировать в `public/js/ad.js`
+6. **Протестировать:** регистрация → вход → создание приглашения → ответ → дашборд
+7. **Настроить рекламу:** зарегистрироваться в Яндекс.Рекламе или AdSense, раскомментировать в `public/js/ad.js`
 
 ## Переменные окружения (Railway)
 
