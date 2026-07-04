@@ -116,10 +116,8 @@ router.get('/vk/callback', async (req, res) => {
 
       if (user) {
         // Link VK to existing account
-        const { getDb, saveDb } = require('../db');
-        const db = await getDb();
-        db.run(`UPDATE users SET vk_id = ? WHERE id = ?`, [vkId, user.id]);
-        saveDb();
+        const { query } = require('../db');
+        await query(`UPDATE users SET vk_id = $1 WHERE id = $2`, [vkId, user.id]);
       } else {
         // Create new user
         user = await User.create({

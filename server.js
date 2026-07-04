@@ -7,6 +7,7 @@ const path = require('path');
 const config = require('./server/config');
 const { globalLimiter } = require('./server/middleware/rateLimit');
 const { csrfMiddleware } = require('./server/middleware/csrf');
+const { initDb } = require('./server/db');
 
 const app = express();
 
@@ -81,6 +82,11 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(config.port, () => {
-  console.log(`Love Constructor running on http://localhost:${config.port}`);
+initDb().then(() => {
+  app.listen(config.port, () => {
+    console.log(`Love Constructor running on http://localhost:${config.port}`);
+  });
+}).catch(err => {
+  console.error('Failed to initialize database:', err);
+  process.exit(1);
 });

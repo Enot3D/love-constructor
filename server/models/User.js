@@ -1,43 +1,32 @@
 const bcrypt = require('bcryptjs');
-const { getDb, saveDb } = require('../db');
+const { query } = require('../db');
 
 const User = {
   async create({ email, password, vkId, displayName, avatarUrl }) {
-    const db = await getDb();
     const passwordHash = password ? bcrypt.hashSync(password, 10) : null;
 
-    db.run(
+    const result = await query(
       `INSERT INTO users (email, password_hash, vk_id, display_name, avatar_url)
-       VALUES (?, ?, ?, ?, ?)`,
+       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
       [email || null, passwordHash, vkId || null, displayName, avatarUrl || null]
     );
 
-    saveDb();
-
-    const result = db.exec(`SELECT last_insert_rowid() as id`);
-    const id = result[0].values[0][0];
-    return this.findByIdAsync(id);
+    return result.rows[0];
   },
 
   async findByIdAsync(id) {
-    const db = await getDb();
-    const results = db.exec(`SELECT * FROM users WHERE id = ?`, [id]);
-    if (!results.length || !results[0].values.length) return null;
-    return rowToUser(results[0].columns, results[0].values[0]);
+    const result = await query(`SELECT * FROM users WHERE id = $1`, [id]);
+    return result.rows[0] || null;
   },
 
   async findByEmail(email) {
-    const db = await getDb();
-    const results = db.exec(`SELECT * FROM users WHERE email = ?`, [email]);
-    if (!results.length || !results[0].values.length) return null;
-    return rowToUser(results[0].columns, results[0].values[0]);
+    const result = await query(`SELECT * FROM users WHERE email = $1`, [email]);
+    return result.rows[0] || null;
   },
 
   async findByVkId(vkId) {
-    const db = await getDb();
-    const results = db.exec(`SELECT * FROM users WHERE vk_id = ?`, [vkId]);
-    if (!results.length || !results[0].values.length) return null;
-    return rowToUser(results[0].columns, results[0].values[0]);
+    const result = await query(`SELECT * FROM users WHERE vk_id = $1`, [vkId]);
+    return result.rows[0] || null;
   },
 
   async verifyPassword(user, password) {
@@ -46,16 +35,8 @@ const User = {
   },
 
   async updateLastLogin(id) {
-    const db = await getDb();
-    db.run(`UPDATE users SET last_login = datetime('now') WHERE id = ?`, [id]);
-    saveDb();
+    await query(`UPDATE users SET last_login = now()::text WHERE id = $1`, [id]);
   },
 };
-
-function rowToUser(columns, values) {
-  const obj = {};
-  columns.forEach((col, i) => { obj[col] = values[i]; });
-  return obj;
-}
 
 module.exports = User;
