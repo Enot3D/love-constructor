@@ -191,7 +191,7 @@ const Preview = {
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
 <title>${escHTML(s.pageTitle)}</title>
 <link href="${fontsLink}" rel="stylesheet" media="print" onload="this.media='all'">
 <noscript><link href="${fontsLink}" rel="stylesheet"></noscript>
@@ -206,11 +206,13 @@ const Preview = {
     line-height: ${s.fontLine};
     color: ${s.colorText};
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     padding: 40px 20px;
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
     position: relative;
     overflow-x: hidden;
     ${bgCSS}
@@ -409,8 +411,10 @@ const Preview = {
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 40px;
+    padding: 40px 20px;
+    padding-bottom: calc(40px + env(safe-area-inset-bottom, 0px));
     animation: fadeIn 0.5s ease;
+    overflow-y: auto;
   }
   .yes-screen.show { display: flex; }
   .yes-screen h1 { color: ${s.colorPrimary}; font-size: 2.5em; margin-bottom: 16px; }
@@ -501,7 +505,7 @@ const Preview = {
   @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.08); } }
 
   @media (max-width: 600px) {
-    body { padding: 24px 16px; font-size: ${Math.max(14, s.fontSize - 2)}px; }
+    body { padding: 24px 16px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); font-size: ${Math.max(14, s.fontSize - 2)}px; }
     .container { max-width: 100%; }
     .title { font-size: 1.5em; }
     .btn { padding: 12px 28px; font-size: ${Math.max(14, s.btnSize - 2)}px; width: 100%; max-width: 280px; }
@@ -514,9 +518,10 @@ const Preview = {
     .music-control { bottom: 12px; right: 12px; }
     .music-control button { width: 40px; height: 40px; font-size: 16px; }
     .yes-screen h1 { font-size: 1.8em; }
-    .yes-screen { padding: 24px 16px; }
+    .yes-screen { padding: 24px 16px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px)); }
     .message-popup { padding: 16px 20px; font-size: 1em; width: 90%; }
     .timer-block { font-size: ${Math.max(24, s.timerSize * 0.7)}px !important; }
+    .name-input-block input { max-width: 100%; }
   }
 </style>
 </head>
@@ -551,12 +556,6 @@ ${musicHTML}
     <p class="yes-reminder-date">📅 ${escHTML(s.mainDate)}</p>
     <p class="yes-reminder-place">📍 ${escHTML(s.mainPlace)}</p>
   </div>
-  ${s.askName === 'on' ? `
-  <div class="name-input-block" id="nameInputBlock">
-    <label>Как тебя зовут?</label>
-    <input type="text" id="guestNameInput" placeholder="Введи своё имя" maxlength="100">
-    <button class="btn-confirm-name" id="btnConfirmName">Подтвердить</button>
-  </div>` : ''}
   <div id="yesExtra"></div>
 </div>
 

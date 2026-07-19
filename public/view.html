@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Приглашение</title>
   <link rel="stylesheet" href="/css/ads.css">
   <style>
@@ -12,6 +12,7 @@
       align-items: center;
       justify-content: center;
       min-height: 100vh;
+      min-height: 100dvh;
       font-family: 'Inter', sans-serif;
       background: #fce4ec;
     }
@@ -34,9 +35,11 @@
     iframe {
       width: 100%;
       height: calc(100vh - 50px);
+      height: calc(100dvh - 50px);
       border: none;
       position: fixed;
       top: 0; left: 0; right: 0;
+      bottom: 50px;
     }
     .ad-footer {
       position: fixed;

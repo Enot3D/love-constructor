@@ -189,6 +189,14 @@
             <label>Имя отправителя</label>
             <input type="text" id="senderName" placeholder="Максим">
           </div>
+          <div class="form-group">
+            <label>Просить имя при принятии</label>
+            <select id="askName">
+              <option value="off">Нет</option>
+              <option value="on">Да</option>
+            </select>
+            <p class="panel-desc" style="margin-top:4px;">Гость должен будет ввести своё имя когда нажмёт «Да»</p>
+          </div>
         </div>
 
         <!-- 2. КНОПКИ -->
@@ -296,7 +304,7 @@
           <div class="dropzone" id="photoDropzone">
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21,15 16,10 5,21"/></svg>
             <p>Перетащите фото сюда<br>или нажмите для загрузки</p>
-            <input type="file" id="photoInput" accept="image/*" multiple hidden>
+            <input type="file" id="photoInput" accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,image/*" multiple hidden>
           </div>
           <div class="photo-grid" id="photoGrid"></div>
           <div class="form-group">
@@ -429,7 +437,7 @@
             <input type="text" id="bgImageUrl" placeholder="https://...">
             <div class="dropzone small" id="bgImageDropzone" style="margin-top:8px;">
               <p>Или загрузите файл</p>
-              <input type="file" id="bgImageInput" accept="image/*" hidden>
+              <input type="file" id="bgImageInput" accept="image/jpeg,image/png,image/gif,image/webp,image/heic,image/heif,image/*" hidden>
             </div>
           </div>
           <div class="form-group bg-video-group" style="display:none;">
@@ -636,14 +644,6 @@
               <option value="off">Нет</option>
               <option value="on">Да</option>
             </select>
-          </div>
-          <div class="form-group">
-            <label>Просить имя при принятии</label>
-            <select id="askName">
-              <option value="off">Нет</option>
-              <option value="on">Да</option>
-            </select>
-            <p class="panel-desc" style="margin-top:4px;">При включении гость должен будет ввести своё имя</p>
           </div>
         </div>
 
