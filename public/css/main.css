@@ -190,6 +190,7 @@ html, body {
   flex-direction: column;
   gap: 2px;
   overflow-y: auto;
+  overflow-x: hidden;
   border-right: 1px solid var(--border-subtle);
 }
 
@@ -231,6 +232,7 @@ html, body {
 .sidebar-content {
   flex: 1;
   overflow-y: auto;
+  overflow-x: hidden;
   padding: 16px;
 }
 
