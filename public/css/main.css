@@ -843,6 +843,7 @@ html, body {
     z-index: 200;
     top: var(--topbar-height);
     height: calc(100vh - var(--topbar-height));
+    height: calc(100dvh - var(--topbar-height));
     width: 85vw !important;
     min-width: 0 !important;
     max-width: 360px !important;
@@ -858,7 +859,7 @@ html, body {
   }
   .nav-item { font-size: 8px; padding: 6px 2px; }
   .nav-item span { display: none; }
-  .sidebar-content { padding: 12px; }
+  .sidebar-content { padding: 12px; padding-bottom: calc(12px + env(safe-area-inset-bottom, 20px)); }
 
   .resizer { display: none; }
 
