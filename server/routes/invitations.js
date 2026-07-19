@@ -165,7 +165,7 @@ router.put('/:id/responses/:responseId', authMiddleware, async (req, res) => {
       return res.status(400).json({ error: 'Текст слишком длинный (макс. 1000 символов)' });
     }
 
-    await Response.update(req.params.responseId, { clickedYes, selectedDate, feedbackText });
+    await Response.update(req.params.responseId, { clickedYes, selectedDate, feedbackText, guestName: req.body.guestName });
     res.json({ ok: true });
   } catch (e) {
     console.error('Update response error:', e);

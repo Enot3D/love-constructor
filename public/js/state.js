@@ -109,6 +109,7 @@ const AppState = {
   yesVideoUrl: '',
   yesRedirect: '',
   yesTimer: 'off',
+  askName: 'off',
 
   /* ---------- Таймер ---------- */
   timerType: 'none',
@@ -227,6 +228,7 @@ function resetProject() {
       { id: 5, text: 'Ты почти нажала!' },
       { id: 6, text: 'Кажется, кнопка убежала...' },
     ],
+    askName: 'off',
   };
   Object.assign(AppState, defaults);
   notify();

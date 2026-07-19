@@ -12,5 +12,6 @@ const YesActionModule = {
     bindField('#yesVideoUrl', 'yesVideoUrl');
     bindField('#yesRedirect', 'yesRedirect');
     bindField('#yesTimer', 'yesTimer');
+    bindField('#askName', 'askName');
   }
 };

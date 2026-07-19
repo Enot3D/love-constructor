@@ -9,7 +9,7 @@ const router = express.Router();
 router.post('/:invitationId', respondLimiter, async (req, res) => {
   try {
     const { invitationId } = req.params;
-    const { responseId, clickedYes, selectedDate, feedbackText } = req.body;
+    const { responseId, clickedYes, selectedDate, feedbackText, guestName } = req.body;
 
     // Verify invitation exists
     const inv = await Invitation.findById(invitationId);
@@ -21,6 +21,9 @@ router.post('/:invitationId', respondLimiter, async (req, res) => {
     if (!responseId || typeof responseId !== 'string' || responseId.length > 32 || !/^[a-zA-Z0-9_-]+$/.test(responseId)) {
       return res.status(400).json({ error: 'Неверный responseId' });
     }
+
+    // Validate guestName
+    const cleanGuestName = guestName ? String(guestName).replace(/<[^>]*>/g, '').slice(0, 100) : null;
 
     // Validate selectedDate format if provided
     if (selectedDate !== undefined && selectedDate !== null && selectedDate !== '') {
@@ -39,7 +42,7 @@ router.post('/:invitationId', respondLimiter, async (req, res) => {
     const found = existing.find(r => r.id === responseId);
 
     if (found) {
-      await Response.update(responseId, { clickedYes, selectedDate, feedbackText });
+      await Response.update(responseId, { clickedYes, selectedDate, feedbackText, guestName: cleanGuestName });
     } else {
       await Response.create({
         id: responseId,
@@ -47,6 +50,7 @@ router.post('/:invitationId', respondLimiter, async (req, res) => {
         clickedYes: clickedYes || false,
         selectedDate,
         feedbackText,
+        guestName: cleanGuestName,
       });
     }
 

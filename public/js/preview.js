@@ -430,6 +430,50 @@ const Preview = {
   .yes-reminder-place { font-size: 1.1em; margin-bottom: 4px; }
   .yes-reminder-for { font-size: 0.95em; opacity: 0.8; margin-top: 8px; }
 
+  .name-input-block {
+    margin-top: 20px;
+    text-align: center;
+    animation: fadeIn 0.5s ease;
+  }
+  .name-input-block label {
+    display: block;
+    font-size: 1em;
+    margin-bottom: 8px;
+    color: ${s.colorText};
+    opacity: 0.8;
+  }
+  .name-input-block input {
+    padding: 12px 20px;
+    border: 2px solid ${s.colorBorder};
+    border-radius: 12px;
+    font: inherit;
+    font-size: 1em;
+    text-align: center;
+    width: 100%;
+    max-width: 300px;
+    outline: none;
+    transition: border-color 0.2s;
+    background: rgba(255,255,255,0.8);
+  }
+  .name-input-block input:focus {
+    border-color: ${s.colorPrimary};
+    box-shadow: 0 0 0 3px ${s.colorPrimary}22;
+  }
+  .name-input-block .btn-confirm-name {
+    margin-top: 12px;
+    padding: 10px 28px;
+    border: none;
+    border-radius: ${s.btnRadius}px;
+    background: ${s.btnYesColor};
+    color: #fff;
+    font: inherit;
+    font-size: ${Math.max(14, s.btnSize - 2)}px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .name-input-block .btn-confirm-name:hover { transform: scale(1.05); }
+
   .message-popup {
     position: fixed;
     top: 50%;
@@ -507,6 +551,12 @@ ${musicHTML}
     <p class="yes-reminder-date">📅 ${escHTML(s.mainDate)}</p>
     <p class="yes-reminder-place">📍 ${escHTML(s.mainPlace)}</p>
   </div>
+  ${s.askName === 'on' ? `
+  <div class="name-input-block" id="nameInputBlock">
+    <label>Как тебя зовут?</label>
+    <input type="text" id="guestNameInput" placeholder="Введи своё имя" maxlength="100">
+    <button class="btn-confirm-name" id="btnConfirmName">Подтвердить</button>
+  </div>` : ''}
   <div id="yesExtra"></div>
 </div>
 
@@ -535,6 +585,7 @@ ${yesHeartsCanvas}
     yesPhoto: s.yesPhoto,
     yesRedirect: s.yesRedirect,
     animType: s.animType,
+    askName: s.askName,
     animCount: s.animCount,
     animSpeed: s.animSpeed,
     timerType: s.timerType,
@@ -692,19 +743,37 @@ ${yesHeartsCanvas}
       const yesScreen = document.getElementById('yesScreen');
       if (yesScreen) yesScreen.classList.add('show');
 
-      sendResponse({ clickedYes: true, selectedDate: selectedDate || null });
-
-      if (s.yesMusic) {
-        const audio = document.getElementById('bgMusic');
-        if (audio) { audio.currentTime = 0; audio.play().catch(()=>{}); }
-      }
-
-      if (s.yesConfetti) startConfetti();
-      if (s.yesHearts) startHearts();
-      if (s.yesFireworks) startFireworks();
-
-      if (s.yesRedirect) {
-        setTimeout(() => { window.location.href = s.yesRedirect; }, 3000);
+      if (s.askName === 'on') {
+        /* Показать поле ввода имени */
+        const extra = document.getElementById('yesExtra');
+        if (extra) {
+          extra.innerHTML = '<div class="name-input-block"><label>Как тебя зовут?</label><input type="text" id="guestNameInput" placeholder="Введи своё имя" maxlength="100"><br><button class="btn-confirm-name" id="btnConfirmName">Подтвердить</button></div>';
+          const confirmBtn = document.getElementById('btnConfirmName');
+          const nameInput = document.getElementById('guestNameInput');
+          if (confirmBtn && nameInput) {
+            nameInput.focus();
+            confirmBtn.addEventListener('click', function() {
+              const name = nameInput.value.trim();
+              sendResponse({ clickedYes: true, selectedDate: selectedDate || null, guestName: name || null });
+              if (s.yesMusic) { const audio = document.getElementById('bgMusic'); if (audio) { audio.currentTime = 0; audio.play().catch(()=>{}); } }
+              if (s.yesConfetti) startConfetti();
+              if (s.yesHearts) startHearts();
+              if (s.yesFireworks) startFireworks();
+              if (s.yesRedirect) { setTimeout(() => { window.location.href = s.yesRedirect; }, 3000); }
+              extra.innerHTML = '';
+            });
+            nameInput.addEventListener('keydown', function(e) {
+              if (e.key === 'Enter') confirmBtn.click();
+            });
+          }
+        }
+      } else {
+        sendResponse({ clickedYes: true, selectedDate: selectedDate || null });
+        if (s.yesMusic) { const audio = document.getElementById('bgMusic'); if (audio) { audio.currentTime = 0; audio.play().catch(()=>{}); } }
+        if (s.yesConfetti) startConfetti();
+        if (s.yesHearts) startHearts();
+        if (s.yesFireworks) startFireworks();
+        if (s.yesRedirect) { setTimeout(() => { window.location.href = s.yesRedirect; }, 3000); }
       }
     });
   }

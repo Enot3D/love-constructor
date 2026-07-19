@@ -178,6 +178,8 @@
   </div>
 
   <script>
+    function esc(s) { const d = document.createElement('div'); d.textContent = s || ''; return d.innerHTML; }
+
     (async function() {
       const params = new URLSearchParams(window.location.search);
       const id = params.get('id');
@@ -243,6 +245,7 @@
               <div class="response-item">
                 <div class="icon">${r.clicked_yes ? '❤️' : r.selected_date ? '📅' : '💬'}</div>
                 <div class="info">
+                  ${r.guest_name ? `<div style="font-size:16px;font-weight:600;color:#333;margin-bottom:4px;">👤 ${esc(r.guest_name)}</div>` : ''}
                   <div class="date">${dateStr}</div>
                   ${yesBadge}
                   <div class="time">${time}</div>

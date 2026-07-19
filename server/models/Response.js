@@ -1,11 +1,11 @@
 const { query } = require('../db');
 
 const Response = {
-  async create({ id, invitationId, clickedYes, selectedDate, feedbackText }) {
+  async create({ id, invitationId, clickedYes, selectedDate, feedbackText, guestName }) {
     await query(
-      `INSERT INTO responses (id, invitation_id, clicked_yes, selected_date, feedback_text)
-       VALUES ($1, $2, $3, $4, $5)`,
-      [id, invitationId, clickedYes ? 1 : 0, selectedDate || null, feedbackText || null]
+      `INSERT INTO responses (id, invitation_id, clicked_yes, selected_date, feedback_text, guest_name)
+       VALUES ($1, $2, $3, $4, $5, $6)`,
+      [id, invitationId, clickedYes ? 1 : 0, selectedDate || null, feedbackText || null, guestName || null]
     );
   },
 
@@ -33,6 +33,7 @@ const Response = {
     if (updates.clickedYes !== undefined) { sets.push(`clicked_yes = $${i++}`); params.push(updates.clickedYes ? 1 : 0); }
     if (updates.selectedDate !== undefined) { sets.push(`selected_date = $${i++}`); params.push(updates.selectedDate); }
     if (updates.feedbackText !== undefined) { sets.push(`feedback_text = $${i++}`); params.push(updates.feedbackText); }
+    if (updates.guestName !== undefined) { sets.push(`guest_name = $${i++}`); params.push(updates.guestName); }
     if (!sets.length) return;
     params.push(id);
     await query(`UPDATE responses SET ${sets.join(', ')} WHERE id = $${i++}`, params);

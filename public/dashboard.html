@@ -323,12 +323,13 @@
           <div class="response-item" data-response-id="${esc(r.id)}">
             <div class="icon">${icon}</div>
             <div class="info">
+              ${r.guest_name ? `<div class="date" style="font-size:15px;color:#333;font-weight:600;">👤 ${esc(r.guest_name)}</div>` : ''}
               <div class="date">${dateStr}</div>
               <div class="status">${status}</div>
               <div class="time">${time}</div>
             </div>
             <div class="response-actions">
-              <button class="btn btn-outline" onclick="editResponse('${esc(r.id)}', ${r.clicked_yes ? 'true' : 'false'}, '${esc(r.selected_date || '')}', '${esc((r.feedback_text || '').replace(/'/g, "\\'"))}')">Изм.</button>
+              <button class="btn btn-outline" onclick="editResponse('${esc(r.id)}', ${r.clicked_yes ? 'true' : 'false'}, '${esc(r.selected_date || '')}', '${esc((r.feedback_text || '').replace(/'/g, "\\'"))}', '${esc((r.guest_name || '').replace(/'/g, "\\'"))}')">Изм.</button>
               <button class="btn btn-danger" onclick="deleteResponse('${esc(r.id)}')">✕</button>
             </div>
           </div>`;
@@ -358,11 +359,15 @@
       }
     }
 
-    function editResponse(responseId, clickedYes, selectedDate, feedbackText) {
+    function editResponse(responseId, clickedYes, selectedDate, feedbackText, guestName) {
       const modal = document.getElementById('responsesModal');
       const content = document.getElementById('modalContent');
 
       content.innerHTML = `
+        <div class="edit-field">
+          <label>Имя гостя</label>
+          <input type="text" id="editGuestName" value="${esc(guestName)}" placeholder="Имя не указано">
+        </div>
         <div class="edit-field">
           <label>Ответ</label>
           <select id="editClickedYes">
@@ -388,13 +393,14 @@
       const clickedYes = document.getElementById('editClickedYes').value === 'true';
       const selectedDate = document.getElementById('editSelectedDate').value || null;
       const feedbackText = document.getElementById('editFeedbackText').value || null;
+      const guestName = document.getElementById('editGuestName').value.trim() || null;
 
       try {
         const resp = await fetch(`/api/invitations/${currentInviteId}/responses/${responseId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
-          body: JSON.stringify({ clickedYes, selectedDate, feedbackText }),
+          body: JSON.stringify({ clickedYes, selectedDate, feedbackText, guestName }),
         });
         if (!resp.ok) throw new Error('Ошибка');
         showToast('Ответ обновлён');
